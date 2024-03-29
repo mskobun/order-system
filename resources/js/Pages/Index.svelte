@@ -4,24 +4,45 @@
     import { Card, Button } from "flowbite-svelte";
 
     export let menu;
+    const addItem = (id) => {
+        console.log(id);
+    };
 </script>
 
 <Layout>
-    <div class="m-5 max-w-screen-xl m-auto">
-        {#each menu as { name: category, items }}
-            <h1 class="font-bold text-3xl my-5">{category}</h1>
-            <div class="flex flex-wrap gap-3">
-                {#each items as item}
-                    <Card class="grid grid-cols-3 grid-rows-2 items-center" padding="none">
-                        <img class="col-span-1 row-span-2 p-4" src={item.image_url} alt={item.name} />
-                        <h2 class="col-span-2 text-xl py-1 text-black font-bold"> {item.name} </h2>
-                        <div class="row-start-2 row-end-3 col-start-2 col-end-4 flex justify-between items-center">
-                        <h2> RM{item.price} </h2>
-                        <button class="text-4xl p-2 text-black"> + </button>
+    <div class="bg-zinc-50 h-screen">
+        <div class="m-5 max-w-screen-xl m-auto">
+            {#each menu as { name: category, items }}
+                <h1 class="font-bold text-3xl my-5">{category}</h1>
+                <div class="md:grid md:grid-cols-3 md:gap-3">
+                    {#each items as item}
+                        <div
+                            class="md:shadow-md border-b-2 p-1 flex gap-3 bg-white"
+                            padding="none"
+                        >
+                            <img
+                                class="h-20"
+                                src={item.image_url}
+                                alt={item.name}
+                            />
+                            <h2 class="text-lg text-black">
+                                {item.name}
+                            </h2>
+                            <div class="mr-1 ml-auto">
+                                <h2 class="font-bold text-l">
+                                    {item.price.toFixed(2)}
+                                </h2>
+                                <button
+                                    on:click={() => addItem(item.id)}
+                                    class="text-4xl p-2 text-black"
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
-                    </Card>
-                {/each}
-            </div>
-        {/each}
+                    {/each}
+                </div>
+            {/each}
+        </div>
     </div>
 </Layout>
