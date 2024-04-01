@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
             ['item_id' => 7, 'category_id' => 2],
             ['item_id' => 8, 'category_id' => 3],
             ['item_id' => 9, 'category_id' => 3],
-            ['item_id' => 10, 'category_id' => 3]
+            ['item_id' => 10, 'category_id' => 3],
         ]);
 
     }

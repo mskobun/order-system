@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
-            $table->string("description");
-            $table->string("image_url");
-            $table->float("price");
-            $table->boolean("available");
+            $table->string('name');
+            $table->string('description');
+            $table->string('image_url');
+            $table->float('price');
+            $table->boolean('available');
         });
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
+            $table->string('name');
         });
         Schema::create('items_categories', function (Blueprint $table) {
-            $table->foreignId("item_id");
-            $table->foreignId("category_id");
+            $table->foreignId('item_id');
+            $table->foreignId('category_id');
         });
 
     }
