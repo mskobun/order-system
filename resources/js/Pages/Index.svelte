@@ -1,16 +1,21 @@
 <script>
-    import { inertia, Link } from "@inertiajs/svelte";
+    import { inertia, Link, router } from "@inertiajs/svelte";
     import Layout from "../Shared/Layout.svelte";
     import { Button, ButtonGroup } from "flowbite-svelte";
 
     export let menu;
-    let orderedItems = {};
-    const modifyCart = (id, amount) => {
-        orderedItems[id] = (orderedItems[id] || 0) + amount;
-        if (orderedItems[id] <= 0) {
-            delete orderedItems[id];
+    export let cart = {};
+    const modifyCart = (id, addAmount) => {
+        cart[id] = (cart[id] || 0) + addAmount;
+        router.post("/cart/modify", { id, amount: cart[id] });
+
+        if (cart[id] <= 0) {
+            delete cart[id];
             // For svelte to trigger a re-render
-            orderedItems = orderedItems;
+            cart = cart;
+            router.post("/cart/modify", { id, amount: 0 });
+        } else {
+            router.post("/cart/modify", { id, amount: cart[id] });
         }
     };
 </script>
@@ -37,7 +42,7 @@
                         if it sees a usage, and the logic becomes too complicated
                         for it to figure it out. -->
                             <div
-                                class={orderedItems[item.id] !== undefined
+                                class={cart[item.id] !== undefined
                                     ? "border-primary-600 border-l-4 p-1 flex md:rounded-md gap-3 bg-white"
                                     : "border-white border-l-4 p-1 flex md:rounded-md gap-3 bg-white"}
                             >
@@ -56,7 +61,7 @@
                                         {item.price.toFixed(2)}
                                     </h2>
                                     <div class="mb-2 mt-auto">
-                                        {#if orderedItems[item.id] === undefined}
+                                        {#if cart[item.id] === undefined}
                                             <Button
                                                 on:click={() =>
                                                     modifyCart(item.id, 1)}
@@ -74,7 +79,7 @@
                                                 >
                                                 <!-- Not really a button, but I just wanted to use the ButtonGroup class -->
                                                 <Button pill>
-                                                    {orderedItems[item.id]}
+                                                    {cart[item.id]}
                                                 </Button>
                                                 <Button
                                                     pill
