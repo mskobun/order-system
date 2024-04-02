@@ -1,5 +1,5 @@
 <script>
-    import { page, router } from "@inertiajs/svelte";
+    import { page, router, Link } from "@inertiajs/svelte";
     import {
         Button,
         Dropdown,
@@ -30,9 +30,15 @@
 
 <div class="sticky top-0 shadow-sm">
     <Navbar>
-        <NavBrand href="/">
-            <img class="h-10" src="/storage/mcd.png" alt="Restaurant logo" />
-        </NavBrand>
+        <Link href="/">
+            <NavBrand>
+                <img
+                    class="h-10"
+                    src="/storage/mcd.png"
+                    alt="Restaurant logo"
+                />
+            </NavBrand>
+        </Link>
         <!--
         <div class="hidden relative md:block">
             <div
