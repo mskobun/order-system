@@ -2,10 +2,30 @@
     import { inertia, Link, router } from "@inertiajs/svelte";
     import Layout from "../Shared/Layout.svelte";
     import MenuItem from "../Shared/MenuItem.svelte";
+    import { Drawer, CloseButton, Button } from "flowbite-svelte";
+    import { ArrowRightOutline } from "flowbite-svelte-icons";
+    import { sineIn } from "svelte/easing";
+
+    let transitionParams = {
+        x: 320,
+        duration: 200,
+        easing: sineIn,
+    };
 
     export let menu;
     export let items;
     export let cart = {};
+    export let cartDrawerHidden = true;
+    $: cartCount = Object.entries(cart).reduce(
+        (acc, [_id, amount]) => acc + amount,
+        0,
+    );
+
+    $: cartTotal = Object.entries(cart).reduce(
+        (acc, [id, amount]) => acc + items[id].price * amount,
+        0,
+    );
+
     const modifyCart = (id, addAmount) => {
         cart[id] = (cart[id] || 0) + addAmount;
         router.post("/cart/modify", { id, amount: cart[id] });
@@ -37,14 +57,37 @@
     placement="right"
     width="w-full md:w-96"
 >
-    <div class="flex items-center">
-        <h1 class="text-3xl font-bold">Cart</h1>
-        <CloseButton
-            on:click={() => (cartDrawerHidden = true)}
-            class="dark:text-white"
-        />
+    <div class="flex flex-col h-full">
+        <div class="mt-0 mb-auto flex items-center py-3">
+            <h1 class="text-3xl font-bold">Cart</h1>
+            <CloseButton
+                on:click={() => (cartDrawerHidden = true)}
+                class="dark:text-white"
+            />
+        </div>
+
+        <div class="divide-y overflow-y-scroll">
+            {#each Object.entries(cart) as [id, amount]}
+                <MenuItem
+                    name={items[id].name}
+                    image_url={items[id].image_url}
+                    price={items[id].price * cart[id]}
+                    amount={cart[id] || 0}
+                    modifyAmount={(addAmount) => modifyCart(id, addAmount)}
+                />
+            {/each}
+        </div>
+        <div class="mb-0 mt-auto">
+            <div class="mx-3 mt-3 flex justify-between text-xl">
+                <span> Total </span>
+                <span> RM {cartTotal.toFixed(2)} </span>
+            </div>
+            <Button class="mt-3 w-full font-bold text-lg">
+                <span> Checkout </span>
+                <ArrowRightOutline class="mt-0.5" />
+            </Button>
+        </div>
     </div>
-    <div></div>
 </Drawer>
 
 <Layout {cartCount} openCart={() => (cartDrawerHidden = false)}>
@@ -58,7 +101,7 @@
                             name={items[id].name}
                             image_url={items[id].image_url}
                             price={items[id].price}
-                            amount={cart[items[id].id] || 0}
+                            amount={cart[id] || 0}
                             modifyAmount={(addAmount) =>
                                 modifyCart(id, addAmount)}
                             sideStripe
