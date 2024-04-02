@@ -14,18 +14,28 @@ class AppController
 {
     private function renderMenu(): Collection
     {
-        $items = DB::select('select items.*, categories.name as category_name from items join items_categories on items.id = items_categories.item_id join categories on items_categories.category_id = categories.id');
-        $response =
-            collect($items)
+        $items_with_category = DB::select('select items.id, categories.name as category_name from items join items_categories on items.id = items_categories.item_id join categories on items_categories.category_id = categories.id order by categories.name, items.name asc');
+        $menu =
+            collect($items_with_category)
                 ->groupBy('category_name')
                 ->map(function ($items, $category_name) {
-                    $items = $items->select(['id', 'name', 'description', 'image_url', 'available', 'price']);
+                    $items = $items->map(function ($item, $key) {
+                        return $item->id;
+                    });
 
                     return ['name' => $category_name, 'items' => $items];
                 })
                 ->values();
 
-        return $response;
+        return $menu;
+    }
+
+    private function renderItems(): Collection
+    {
+        $items = DB::select('select * from items;');
+        $itemMap = collect($items)->keyBy('id');
+
+        return $itemMap;
     }
 
     private function renderCart(User $user): Collection
@@ -46,11 +56,13 @@ class AppController
         if ($request->user()) {
             return Inertia::render('Index', [
                 'menu' => self::renderMenu(),
+                'items' => self::renderItems(),
                 'cart' => self::renderCart($request->user()),
             ]);
         } else {
             return Inertia::render('Index', [
                 'menu' => self::renderMenu(),
+                'items' => self::renderItems(),
             ]);
         }
     }
