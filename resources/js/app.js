@@ -9,7 +9,9 @@ createInertiaApp({
         return pages[`./Pages/${name}.svelte`]
 
     },
-
+    progress: {
+        color: '#E02424'
+    },
     setup({ el, App, props }) {
 
         new App({ target: el, props })
