@@ -27,11 +27,11 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('users');
+            return redirect()->intended('/login');
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'incorrectCredentials' => true
         ])->withInput($request->only('email', 'remember'));
     }
 
