@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Http\Controllers;
 
 class LoginController extends Controller
 {
@@ -20,6 +21,8 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
+        $continuation = $request->continuation ? $request->continuation : "/";
+
         // just figured out that checkboxes don't send anything if not checked...
         // anyway this handles it
         $remember = $request->boolean('remember');
@@ -27,12 +30,19 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/login');
+            return redirect($continuation);
         }
 
         return back()->withErrors([
             'incorrectCredentials' => true
-        ])->withInput($request->only('email', 'remember'));
+        ])->withInput($request->only('email', 'remember', 'continuation'));
+    }
+
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        return back();
     }
 
     public function displayLogin(Request $request): Response
@@ -41,6 +51,7 @@ class LoginController extends Controller
             'email' => $request->old('email'),
             'password' => '',
             'remember' => $request->old('remember'),
+            'continuation' => parse_url(url()->previous(), PHP_URL_PATH),
         ];
 
         return Inertia::render('Login', ['values' => $values]);

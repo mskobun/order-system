@@ -23,9 +23,16 @@
         router.get("/", { openCart: true });
     };
 
-    // TODO: Remove placeholders
-    const login = () => {};
-    const logout = () => {};
+    // Note: added some functionality
+    // for now, the login form will just lead to the default page (currently /)
+    function login() {
+        router.get("/login");
+    }
+
+    function logout() {
+        // this took a while to figure out... I think it's hacky to just reload it directly but oh well
+        router.post("/logout", undefined, { onSuccess: () => window.location.reload() });
+    }
 </script>
 
 <div class="sticky top-0 shadow-sm">
