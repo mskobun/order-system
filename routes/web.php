@@ -11,4 +11,6 @@ Route::get('/users', [UserController::class, 'list']);
 Route::get('/auth_test', [UserController::class, 'list'])->middleware('auth');
 Route::post('/login_endpoint', [LoginController::class, 'authenticate']);
 Route::get('/login', [LoginController::class, 'displayLogin'])->name('login');
+Route::post('/signup_endpoint', [LoginController::class, 'register']);
+Route::get('/signup', [LoginController::class, 'displaySignup'])->name('signup');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
