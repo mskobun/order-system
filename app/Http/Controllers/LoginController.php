@@ -64,6 +64,7 @@ class LoginController extends Controller
         $success = Hash::check($password, $user->password);
         
         if ($success) {
+            // making an instance of the user model manually with data from the SQL statement, so I can use the login function
             $model_user = new User;
             $model_user->id = $user->id;
             $model_user->name = $user->name;
