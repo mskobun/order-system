@@ -7,7 +7,7 @@
         password: null,
     };
 
-    let password_confirmation = null;
+    export let password_confirmation = null;
     let accept_checkbox = false;
 
     export let errors = {
