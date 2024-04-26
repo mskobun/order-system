@@ -31,18 +31,21 @@ class LoginController extends Controller
 
         $remember = $request->boolean($request->remember);
 
-        if (LoginController::attemptLogin($credentials, $remember)) {
+        // passed into attemptLogin, and fills up with the errors generated
+        $errors = [];
+
+        if (LoginController::attemptLogin($credentials, $remember, $errors)) {
             $request->session()->regenerate();
 
             return redirect($continuation);
         }
 
-        return back()->withErrors([
-            'incorrectCredentials' => true
-        ])->withInput($request->only('email', 'remember', 'continuation'));
+        return back()->withErrors(
+            $errors
+        )->withInput($request->only('email', 'remember', 'continuation'));
     }
 
-    public function attemptLogin(array $credentials, bool $remember): bool
+    public function attemptLogin(array $credentials, bool $remember, array & $errors): bool
     {
         $email = $credentials['email'];
         $password = $credentials['password'];
@@ -55,6 +58,7 @@ class LoginController extends Controller
         );
 
         if (count($users) == 0) {
+            $errors = array_merge($errors, ['emailError' => true]);
             return false;
         }
 
@@ -80,15 +84,23 @@ class LoginController extends Controller
             return true;
         }
 
+        $errors = array_merge($errors, ['passwordError' => true]);
         return false;
     }
 
     public function register(Request $request): RedirectResponse
     {
+        // automatically generates a redirect with errors corresponding to the keys here, 
+        // like 'password' => The password field must be at least 6 characters
         $credentials = $request->validate([
             'name' => 'required',
             'email' => ['required', 'email'],
-            'password' => ['required', 'min:6'],
+            'password' => [
+                'required', 
+                'confirmed', 
+                'min:6', 
+                'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/'
+            ],
         ]);
 
         // ensuring the email is unique manually since the rule for it accesses the DB with an ORM
@@ -99,7 +111,11 @@ class LoginController extends Controller
         );
         
         if (count($emails) !== 0) {
-            return back()->withErrors(['email' => 'This email already exists.']);
+            return back()->withErrors(
+                ['email' => 'This email already exists.']
+            )->withInput(
+                $request->only('name', 'email', 'password', 'password_confirmation')
+            );
         }
 
         $name = $credentials['name'];
@@ -140,9 +156,10 @@ class LoginController extends Controller
         $values = [
             'name' => $request->old('name'),
             'email' => $request->old('email'),
-            'password' => '',
+            'password' => $request->old('password'),
+            'password_confirmation' => $request->old('password_confirmation'),
         ];
 
-        return Inertia::render('Signup', ['values' => $values, 'password_confirmation' => '']);
+        return Inertia::render('Signup', ['values' => $values]);
     }
 }

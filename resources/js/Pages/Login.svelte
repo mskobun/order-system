@@ -1,5 +1,6 @@
 <script>
     import { inertia, Link, router } from "@inertiajs/svelte";
+    import { Input, Label, Helper, Button, Checkbox, Heading, A } from 'flowbite-svelte';
 
     // continuation is the url to jump to after login
     export let values = {
@@ -10,7 +11,8 @@
     };
 
     export let errors = {
-        incorrectCredentials: false,
+        emailError: false,
+        passwordError: false,
     }
 
     function handleSubmit() {
@@ -26,38 +28,45 @@
         </a> -->
         <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                <Heading tag="h1" class="mb-4" customSize="text-xl font-bold md:text-2xl">
                     Sign in to your account
-                </h1>
+                </Heading>
                 <form class="space-y-4 md:space-y-6" on:submit|preventDefault={handleSubmit}>
                     <div>
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                        <input bind:value={values.email} type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="example@test.com" required="">
+                        {#if !errors.emailError}
+                            <Label for="email" class="mb-2">Your email</Label>
+                            <Input bind:value={values.email} type="email" id="email" placeholder="example@test.com" required />
+                        {:else}
+                            <Label for="email-error" class="mb-2" color="red">Your email</Label>
+                            <Input bind:value={values.email} color="red" type="email" id="email-error" placeholder="example@test.com" required />
+                            <Helper class="text-sm font-light" color="red">
+                                The entered email doesn't exist in our database. <A href="/signup" class="font-medium">Sign up?</A>
+                            </Helper>
+                        {/if}
                     </div>
                     <div>
-                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                        <input bind:value={values.password} type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
+                        {#if !errors.passwordError}
+                            <Label for="password" class="mb-2">Password</Label>
+                            <Input bind:value={values.password} type="password" id="password" placeholder="••••••••" required />
+                        {:else}
+                            <Label for="password-error" class="mb-2" color="red">Password</Label>
+                            <Input bind:value={values.password} color="red" type="password" id="password-error" placeholder="••••••••" required />
+                            <Helper class="text-sm font-light" color="red">
+                                Wrong password entered. 
+                            </Helper>
+                        {/if}
                     </div>
                     <div class="flex items-center justify-between">
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                              <input bind:checked={values.remember} id="remember" aria-describedby="remember" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required="">
-                            </div>
-                            <div class="ml-3 text-sm">
-                              <label for="remember" class="text-gray-500 dark:text-gray-300">Remember me</label>
-                            </div>
-                        </div>
-                        <a href="#" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password?</a>
+                        <Checkbox bind:checked={values.remember} id="remember" class="space-x-1 rtl:space-x-reverse text-gray-500 dark:text-gray-300">Remember me</Checkbox>
+                        <!-- yet to be implemented -->
+                        <!-- <A href="#" class="text-sm font-medium">Forgot password?</A> -->
                     </div>
-                    <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
-                    {#if errors.incorrectCredentials}
-                        <p class="text-sm font-light text-red-600 dark:text-gray-400">
-                            Either email or password is incorrect - Try again!
-                        </p>
-                    {/if}
-                    <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                        Don’t have an account yet? <a href="/signup" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
-                    </p>
+                    <div class="flex items-center justify-between">
+                        <Button type="submit">Sign in</Button>
+                    </div>
+                    <Helper class="text-sm font-light">
+                        Don’t have an account yet? <A href="/signup" class="font-medium">Sign up</A>
+                    </Helper>
                 </form>
             </div>
         </div>
