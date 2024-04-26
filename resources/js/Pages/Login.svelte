@@ -33,24 +33,18 @@
                 </Heading>
                 <form class="space-y-4 md:space-y-6" on:submit|preventDefault={handleSubmit}>
                     <div>
-                        {#if !errors.emailError}
-                            <Label for="email" class="mb-2">Your email</Label>
-                            <Input bind:value={values.email} type="email" id="email" placeholder="example@test.com" required />
-                        {:else}
-                            <Label for="email-error" class="mb-2" color="red">Your email</Label>
-                            <Input bind:value={values.email} color="red" type="email" id="email-error" placeholder="example@test.com" required />
+                        <Label for="email" class="mb-2" color={errors.emailError ? "red" : undefined}>Your email</Label>
+                        <Input bind:value={values.email} color={errors.emailError ? "red" : undefined} type="email" id="email" placeholder="example@test.com" required />
+                        {#if errors.emailError}
                             <Helper class="text-sm font-light" color="red">
                                 The entered email doesn't exist in our database. <A href="/signup" class="font-medium">Sign up?</A>
                             </Helper>
                         {/if}
                     </div>
                     <div>
-                        {#if !errors.passwordError}
-                            <Label for="password" class="mb-2">Password</Label>
-                            <Input bind:value={values.password} type="password" id="password" placeholder="••••••••" required />
-                        {:else}
-                            <Label for="password-error" class="mb-2" color="red">Password</Label>
-                            <Input bind:value={values.password} color="red" type="password" id="password-error" placeholder="••••••••" required />
+                        <Label for="password" class="mb-2" color={errors.passwordError ? "red" : undefined}>Password</Label>
+                        <Input bind:value={values.password} color={errors.passwordError ? "red" : undefined} type="password" id="password" placeholder="••••••••" required />
+                        {#if errors.passwordError}
                             <Helper class="text-sm font-light" color="red">
                                 Wrong password entered. 
                             </Helper>

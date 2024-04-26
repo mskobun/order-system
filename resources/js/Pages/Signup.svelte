@@ -16,6 +16,9 @@
     export let errors = {
     }
 
+    $: passwordMatchError = errors.password == "The password field confirmation does not match" 
+    $: passwordError = 'password' in errors && !passwordMatchError
+
     function handleSubmit() {
         router.post("/signup_endpoint", values);
     }
@@ -38,26 +41,22 @@
                         <Input bind:value={values.name} type="text" id="name" placeholder="John Doe" required />
                     </div>
                     <div>
-                        {#if !('email' in errors)}
-                            <Label for="email" class="mb-2">Your email</Label>
-                            <Input bind:value={values.email} type="email" id="email" placeholder="example@test.com" required />
-                        {:else}
-                            <Label for="email-error" class="mb-2" color="red">Your email</Label>
-                            <Input bind:value={values.email} color="red" type="email" id="email-error" placeholder="example@test.com" required />
+                        <Label for="email" class="mb-2" color={'email' in errors ? "red" : undefined}>Your email</Label>
+                        <Input bind:value={values.email} color={'email' in errors ? "red" : undefined} type="email" id="email" placeholder="example@test.com" required />
+                        {#if 'email' in errors}
                             <Helper class="text-sm font-light" color="red">
                                 {errors.email} <A href="/login" class="font-medium">Login?</A>
                             </Helper>
                         {/if}
                     </div>
                     <div>
-                        {#if !('password' in errors && errors.password !== "The password field confirmation does not match.")}
-                            <Label for="password" class="mb-2">Password</Label>
-                            <Input bind:value={values.password} type="password" id="password" placeholder="••••••••" required />
-                        {:else}
-                            <Label for="password-error" class="mb-2" color="red">Password</Label>
-                            <Input bind:value={values.password} color="red" type="password" id="password-error" placeholder="••••••••" required />
+                        <Label for="password" class="mb-2" color={passwordError ? "red" : undefined}>
+                            Password
+                        </Label>
+                        <Input bind:value={values.password} color={passwordError ? "red" : undefined} type="password" id="password" placeholder="••••••••" required />
+                        {#if passwordError}
                             <Helper class="text-sm font-light" color="red">
-                                {#if errors.password == "The password field format is invalid."}
+                                {#if !passwordMatchError}
                                     Your password must contain at least 3 of the following categories:
                                     <br>
                                     - Uppercase characters
@@ -76,12 +75,9 @@
                         {/if}
                     </div>
                     <div>
-                        {#if !(errors.password == "The password field confirmation does not match.")}
-                            <Label for="confirm-password" class="mb-2">Confirm Password</Label>
-                            <Input bind:value={values.password_confirmation} type="password" id="confirm-password" placeholder="••••••••" required />
-                        {:else}
-                            <Label for="confirm-password-error" class="mb-2" color="red">Confirm Password</Label>
-                            <Input bind:value={values.password_confirmation} color="red" type="password" id="confirm-password-error" placeholder="••••••••" required />
+                        <Label for="confirm-password" class="mb-2" color={passwordMatchError ? "red" : undefined}>Confirm Password</Label>
+                        <Input bind:value={values.password_confirmation} color={passwordMatchError ? "red" : undefined} type="password" id="confirm-password" placeholder="••••••••" required />
+                        {#if passwordMatchError}
                             <Helper class="text-sm font-light" color="red">
                                 Passwords don't match!
                             </Helper>
