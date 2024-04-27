@@ -14,6 +14,7 @@ use App\Http\Controllers;
 use App\Models\User;
 use PhpParser\Node\Expr\Cast\Bool_;
 use Illuminate\Support\Facades\Log;
+use App\AuthUtils;
 
 class LoginController extends Controller
 {
@@ -35,7 +36,7 @@ class LoginController extends Controller
         $errors = [];
 
         if (LoginController::attemptLogin($credentials, $remember, $errors)) {
-            $request->session()->regenerate();
+            AuthUtils::regenerateSession($request);
 
             return redirect($continuation);
         }
@@ -79,7 +80,7 @@ class LoginController extends Controller
             $model_user->created_at = $user->created_at;
             $model_user->updated_at = $user->updated_at;
 
-            Auth::login($model_user, $remember);
+            AuthUtils::login($model_user, $remember);
             
             return true;
         }
@@ -160,8 +161,8 @@ class LoginController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
-        Auth::logout();
-        $request->session()->invalidate();
+        AuthUtils::logout();
+        AuthUtils::invalidateSession($request);
         return back();
     }
 
