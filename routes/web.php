@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AppController::class, 'index'])->name('index');
 Route::post('/cart/modify', [AppController::class, 'modify_cart'])->middleware('auth');
-Route::get('/order/confirm', [OrderController::class, 'confirm_order_page'])->middleware('auth');
+Route::get('/order/confirm', [OrderController::class, 'confirm_order'])->middleware('auth');
 Route::post('/order/submit', [OrderController::class, 'submit_order'])->middleware('auth');
 Route::get('/order/{order_id}', [OrderController::class, 'order_status'])->middleware('auth')->name('order_status');
 Route::get('/users', [UserController::class, 'list']);

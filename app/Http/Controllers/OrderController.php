@@ -14,7 +14,7 @@ use Inertia\Response;
 
 class OrderController
 {
-    public function confirm_order_page(Request $request): Response
+    public function confirm_order(Request $request): Response
     {
         $items = DB::select(
             'SELECT cart_items.amount, items.*
