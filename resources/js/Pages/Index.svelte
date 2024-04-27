@@ -1,7 +1,7 @@
 <script>
     import { inertia, Link, router } from "@inertiajs/svelte";
-    import Layout from "../Shared/Layout.svelte";
-    import MenuItem from "../Shared/MenuItem.svelte";
+    import Layout from "../Components/Layout.svelte";
+    import MenuItem from "../Components/MenuItem.svelte";
     import { Drawer, CloseButton, Button } from "flowbite-svelte";
     import { ArrowRightOutline } from "flowbite-svelte-icons";
     import { sineIn } from "svelte/easing";

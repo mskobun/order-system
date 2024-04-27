@@ -1,6 +1,6 @@
 <script>
     import { page, router } from "@inertiajs/svelte";
-    import Layout from "../Shared/Layout.svelte";
+    import Layout from "../Components/Layout.svelte";
     import { Label, Card, Button, ButtonGroup } from "flowbite-svelte";
     import Field from "../Components/Checkout/Field.svelte";
     import Section from "../Components/Checkout/Section.svelte";
