@@ -21,7 +21,8 @@ class OrderController
             FROM cart_items
             JOIN items
             ON cart_items.item_id = items.id
-            WHERE user_id = ?;', [$request->user()->id]);
+            WHERE user_id = ?
+            ORDER BY cart_items.amount DESC, items.name;', [$request->user()->id]);
 
         return Inertia::render('ConfirmOrderAndPay', [
             'order_items' => $items,
@@ -30,7 +31,28 @@ class OrderController
 
     public function list_orders(Request $request): Response
     {
-
+        // Latest order first
+        $orders = collect(
+            DB::select(
+                'SELECT * FROM orders
+            WHERE user_id = ?
+            ORDER BY id DESC', [$request->user()->id])
+        );
+        $orders = $orders->map(function ($order, $key) {
+            $statuses = DB::select(
+                'SELECT * FROM order_status
+                ORDER BY created_at DESC', []);
+            $items = DB::select(
+                'SELECT order_items.*
+                FROM order_items
+                WHERE order_id = ?
+                ORDER BY amount DESC, name', [$order->id]);
+            $order->items = $items;
+            $order->statuses = $statuses;
+            return $order;
+        });
+        return Inertia::render('Orders', [
+            'orders' => $orders]);
     }
 
     // Copied from https://www.regular-expressions.info/creditcard.html
@@ -154,7 +176,7 @@ class OrderController
 
             DB::statement('COMMIT;');
 
-            return to_route('order_status', ['order_id' => $order_id]);
+            return to_route('list_orders');
 
         } catch (Exception $e) {
             DB::statement('ROLLBACK;');

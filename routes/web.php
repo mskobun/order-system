@@ -10,7 +10,7 @@ Route::get('/', [AppController::class, 'index'])->name('index');
 Route::post('/cart/modify', [AppController::class, 'modify_cart'])->middleware('auth');
 Route::get('/order/confirm', [OrderController::class, 'confirm_order'])->middleware('auth');
 Route::post('/order/submit', [OrderController::class, 'submit_order'])->middleware('auth');
-Route::get('/order/{order_id}', [OrderController::class, 'order_status'])->middleware('auth')->name('order_status');
+Route::get('/order/list', [OrderController::class, 'list_orders'])->middleware('auth')->name('list_orders');
 Route::get('/users', [UserController::class, 'list']);
 Route::get('/auth_test', [UserController::class, 'list'])->middleware('auth');
 Route::post('/login_endpoint', [LoginController::class, 'authenticate']);

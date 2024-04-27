@@ -4,6 +4,7 @@
     import { Label, Alert, Card, Button, ButtonGroup } from "flowbite-svelte";
     import Field from "../Components/Checkout/Field.svelte";
     import Section from "../Components/Checkout/Section.svelte";
+    import OrderItem from "../Components/OrderItem.svelte";
 
     import {
         StoreSolid,
@@ -93,18 +94,11 @@
                 {/if}
                 <div class="divide-y">
                     {#each order_items as item}
-                        <div class="flex bg-white py-2 items-start gap-1">
-                            <div
-                                class="w-8 h-8 border-2 border-primary-600 flex justify-center items-center rounded"
-                            >
-                                {item.amount}x
-                            </div>
-                            <h2>{item.name}</h2>
-
-                            <h2 class="mr-0 ml-auto">
-                                {(item.price * item.amount).toFixed(2)}
-                            </h2>
-                        </div>
+                        <OrderItem
+                            name={item.name}
+                            amount={item.amount}
+                            price={item.price}
+                        />
                     {/each}
 
                     <div class="flex bg-white py-2 items-start gap-1">
