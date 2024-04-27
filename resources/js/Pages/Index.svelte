@@ -15,7 +15,11 @@
     export let menu;
     export let items;
     export let cart = {};
-    export let cartDrawerHidden = true;
+    // This sets cartDrawerHidden to value of open_cart initially
+    // But then it's only set by user actions. This is so reloads due to
+    // cart changes don't suddenly trigger
+    export let open_cart = false;
+    let cartDrawerHidden = !open_cart;
     $: cartCount = Object.entries(cart).reduce(
         (acc, [_id, amount]) => acc + amount,
         0,
@@ -43,7 +47,9 @@
             router.post(
                 "/cart/modify",
                 { id, amount: cart[id] },
-                { preserveScroll: true },
+                {
+                    preserveScroll: true,
+                },
             );
         }
     };
@@ -57,8 +63,8 @@
     placement="right"
     width="w-full md:w-96"
 >
-    <div class="flex flex-col h-full">
-        <div class="mt-0 mb-auto flex items-center py-3">
+    <div class="flex flex-col h-full justify-start">
+        <div class="flex items-center py-3">
             <h1 class="text-3xl font-bold">Cart</h1>
             <CloseButton
                 on:click={() => (cartDrawerHidden = true)}
@@ -82,10 +88,12 @@
                 <span> Total </span>
                 <span> RM {cartTotal.toFixed(2)} </span>
             </div>
-            <Button class="mt-3 w-full font-bold text-lg">
-                <span> Checkout </span>
-                <ArrowRightOutline class="mt-0.5" />
-            </Button>
+            <Link href="/order/confirm">
+                <Button class="mt-3 w-full font-bold text-lg">
+                    <span> Checkout </span>
+                    <ArrowRightOutline class="mt-0.5" />
+                </Button>
+            </Link>
         </div>
     </div>
 </Drawer>

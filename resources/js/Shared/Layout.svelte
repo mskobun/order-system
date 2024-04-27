@@ -20,7 +20,7 @@
     export let cartCount;
 
     export let openCart = () => {
-        router.get("/", { openCart: true });
+        router.get("/", { open_cart: true });
     };
 
     // Note: added some functionality

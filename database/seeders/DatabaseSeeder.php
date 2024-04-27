@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'phone' => '01412341234',
+            'address' => 'Menara IMC, No 8 Jalan Sultan Ismail, Kuala Lumpur, Malaysia',
         ]);
         DB::table('categories')->insert([
             ['id' => 1, 'name' => 'Burgers'],
