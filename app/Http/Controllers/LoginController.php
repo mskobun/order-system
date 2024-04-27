@@ -14,7 +14,7 @@ use App\Http\Controllers;
 use App\Models\User;
 use PhpParser\Node\Expr\Cast\Bool_;
 use Illuminate\Support\Facades\Log;
-use OrderSystem\AuthUtils;
+use App\AuthUtils;
 
 class LoginController extends Controller
 {

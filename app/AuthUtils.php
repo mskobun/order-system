@@ -1,6 +1,6 @@
 <?php
 
-namespace OrderSystem;
+namespace App;
 
 use Illuminate\Support\Facades\Auth;
 
