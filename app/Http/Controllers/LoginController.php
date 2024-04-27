@@ -153,10 +153,24 @@ class LoginController extends Controller
             'address' => ['required'],
         ]);
 
-        $user = $request->user();        
-        Log::debug($request->session()->all());
+        $user = AuthUtils::getUser($request);
 
-        return back();
+        if (!is_null($user)) {
+            DB::statement(
+                'UPDATE users
+                SET name = ?,
+                    email = ?,
+                    phone = ?,
+                    address = ?
+                WHERE id = ?',
+                [$request['name'], $request['email'], $request['phone'], $request['address'],
+                $user['id']]
+            );
+        }
+
+        return back()->withInput(
+            ['updated' => true]
+        );
     }
 
     public function logout(Request $request): RedirectResponse

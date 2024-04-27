@@ -13,6 +13,7 @@ use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\AuthUtils;
+use Illuminate\Support\Facades\Log;
 
 class AppController
 {
@@ -86,10 +87,11 @@ class AppController
 
     public function displayProfile(Request $request): Response
     {
+        $user = AuthUtils::getUser($request);
+
         return Inertia::render('Profile', [
-            'items' => self::renderItems(),
-            'cart' => self::renderCart($request->user()),
-            'open_cart' => $request->query('open_cart') == true,
+            'user' => $user,
+            'updated' => $request->old('updated'),
         ]);
     }
 

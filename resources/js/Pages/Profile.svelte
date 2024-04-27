@@ -13,15 +13,17 @@
     import Field from "../Components/Checkout/Field.svelte";
     import Section from "../Components/Checkout/Section.svelte";
 
-    export let values = {
+    export let user = {
         name: null,
         email: null,
         phone: null,
         address: null,
     };
 
+    export let updated = false;
+
     function handleSubmit() {
-        router.post("/update_profile", values);
+        router.post("/update_profile", user);
     }
 </script>
 
@@ -48,7 +50,7 @@
                                     id="name"
                                     label="Name"
                                     placeholder="John Doe"
-                                    bind:value={values.name}
+                                    bind:value={user.name}
                                     error={false}
                                     type="text"
                                     required={true}
@@ -59,7 +61,7 @@
                                     id="email"
                                     label="Email"
                                     placeholder="example@test.com"
-                                    bind:value={values.email}
+                                    bind:value={user.email}
                                     error={false}
                                     type="email"
                                     required={true}
@@ -70,7 +72,7 @@
                                     id="phone"
                                     label="Phone Number"
                                     placeholder="012-3456789"
-                                    bind:value={values.phone}
+                                    bind:value={user.phone}
                                     error={false}
                                     type="tel"
                                     required={true}
@@ -81,13 +83,18 @@
                                     id="address"
                                     label="Address"
                                     placeholder="House 3, Placeholder Street, Malaysia"
-                                    bind:value={values.address}
+                                    bind:value={user.address}
                                     error={false}
                                     type="text"
                                     required={true}
                                 ></Field>
                             </div>
                             <Button type="submit">Update</Button>
+                            {#if updated} 
+                            <Helper class="m-1 text-sm" color="red">
+                                Updated!
+                            </Helper>
+                            {/if}
                         </form>
                     </div>
 
