@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\AuthUtils;
 
 class AppController
 {
@@ -68,11 +69,11 @@ class AppController
 
     public function index(Request $request): Response
     {
-        if ($request->user()) {
+        if (AuthUtils::getUser($request)) {
             return Inertia::render('Index', [
                 'menu' => self::renderMenu(),
                 'items' => self::renderItems(),
-                'cart' => self::renderCart($request->user()),
+                'cart' => self::renderCart(AuthUtils::getUser($request)),
                 'open_cart' => $request->query('open_cart') == true,
             ]);
         } else {
@@ -102,19 +103,19 @@ class AppController
             ->withErrors(['id' => 'Item doesn\'t exist!']);
         }
 
-        if ($request->user()) {
+        if (AuthUtils::getUser($request)) {
             if ($validated['amount'] <= 0) {
                 DB::statement(
                     'DELETE FROM cart_items 
                     WHERE user_id = ? AND item_id = ?', 
-                    [$request->user()['id'], $validated['id']]
+                    [AuthUtils::getUser($request)['id'], $validated['id']]
                 );
             } else {
                 DB::statement(
                     'INSERT INTO cart_items (user_id, item_id, amount) 
                     VALUES (?, ?, ?) 
                     ON DUPLICATE KEY UPDATE amount = ?', 
-                    [$request->user()['id'], $validated['id'], $validated['amount'], 
+                    [AuthUtils::getUser($request)['id'], $validated['id'], $validated['amount'], 
                     $validated['amount']]
                 );
             }
@@ -132,9 +133,9 @@ class AppController
 
     public function confirm_order_page(Request $request): Response
     {
-        if ($request->user()) {
+        if (AuthUtils::getUser($request)) {
             return Inertia::render('ConfirmOrderAndPay', [
-                'order_items' => self::renderOrderItems($request->user()),
+                'order_items' => self::renderOrderItems(AuthUtils::getUser($request)),
             ]);
         }
     }
@@ -184,11 +185,11 @@ class AppController
                 (user_id, type, address, phone, name)
                 VALUES (?, ?, ?, ?, ?);
                 ',
-                [$request->user()['id'], $orderType, $validated['address'], $validated['phone'], $validated['name']]);
+                [AuthUtils::getUser($request)['id'], $orderType, $validated['address'], $validated['phone'], $validated['name']]);
 
             $order_id = DB::scalar('SELECT LAST_INSERT_ID()');
             // Then, add cart items to order items
-            $cart_items = DB::select('SELECT item_id, amount FROM cart_items where user_id = ?', [$request->user()['id']]);
+            $cart_items = DB::select('SELECT item_id, amount FROM cart_items where user_id = ?', [AuthUtils::getUser($request)['id']]);
 
             foreach ($cart_items as $item) {
                 DB::statement('INSERT INTO order_items (order_id, item_id, amount) VALUES (?, ?, ?)', [$order_id, $item->item_id, $item->amount]);
@@ -196,7 +197,7 @@ class AppController
 
             // Clear the cart
             DB::statement('DELETE FROM cart_items WHERE user_id = ?',
-                [$request->user()['id']]);
+                [AuthUtils::getUser($request)['id']]);
 
             // Create a new status entry.
             // Since we don't actually process payments, create both
