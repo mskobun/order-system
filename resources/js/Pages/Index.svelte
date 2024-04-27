@@ -80,6 +80,7 @@
                     price={items[id].price * cart[id]}
                     amount={cart[id] || 0}
                     modifyAmount={(addAmount) => modifyCart(id, addAmount)}
+                    showDescription={false}
                 />
             {/each}
         </div>
@@ -106,13 +107,17 @@
                 <div class="md:grid md:grid-cols-3 md:gap-3 max-md:divide-y">
                     {#each category_items as id}
                         <MenuItem
+                            id={id}
                             name={items[id].name}
+                            description={items[id].description}
                             image_url={items[id].image_url}
                             price={items[id].price}
                             amount={cart[id] || 0}
                             modifyAmount={(addAmount) =>
                                 modifyCart(id, addAmount)}
                             sideStripe
+                            isAvailable={!!items[id].available}
+                            showDescription={true}
                         />
                     {/each}
                 </div>
