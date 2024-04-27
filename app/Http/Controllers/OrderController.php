@@ -102,29 +102,37 @@ class OrderController
         // noting will be inserted, instead of having dangling data
         DB::statement('START TRANSACTION;');
         try {
-            // Create the order first, and get the id
-            DB::statement(
-                'INSERT INTO orders
-                (user_id, type, address, phone, name)
-                VALUES (?, ?, ?, ?, ?);',
-                [$request->user()->id, $orderType, $validated['address'],
-                    $validated['phone'], $validated['name']]
-            );
-
-            $order_id = DB::scalar('SELECT LAST_INSERT_ID()');
-
-            // Then, add cart items to order items
             $cart_items = DB::select('
-            SELECT item_id, amount
+            SELECT items.id, items.name, items.price, cart_items.amount
             FROM cart_items
+            JOIN items
+            ON items.id = cart_items.item_id
             WHERE user_id = ?',
                 [$request->user()->id]
             );
 
+            // This is not duplication, since we do not want future
+            // name/price/menu changes to affect orders already made
+            $total = collect($cart_items)->reduce(function ($carry, $item) {
+                return $carry + $item->price * $item->amount;
+            }, 0);
+
+            // Create the order first, and get the id
+            DB::statement(
+                'INSERT INTO orders
+                (user_id, type, address, phone, name, total)
+                VALUES (?, ?, ?, ?, ?, ?);',
+                [$request->user()->id, $orderType, $validated['address'],
+                    $validated['phone'], $validated['name'], $total]
+            );
+
+            $order_id = DB::scalar('SELECT LAST_INSERT_ID()');
+
+            // Then, insert the order items
             foreach ($cart_items as $item) {
                 DB::statement(
-                    'INSERT INTO order_items (order_id, item_id, amount)
-                    VALUES (?, ?, ?)', [$order_id, $item->item_id, $item->amount]);
+                    'INSERT INTO order_items (order_id, item_id, amount, price, name)
+                    VALUES (?, ?, ?, ?, ?)', [$order_id, $item->id, $item->amount, $item->price, $item->name]);
             }
 
             // Clear the cart
