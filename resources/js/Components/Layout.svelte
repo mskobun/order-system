@@ -7,6 +7,7 @@
         DropdownDivider,
         Indicator,
         Navbar,
+        Banner,
         NavBrand,
         Input,
     } from "flowbite-svelte";
@@ -15,6 +16,7 @@
         ChevronDownOutline,
         SearchOutline,
         CartOutline,
+        InfoCircleSolid,
     } from "flowbite-svelte-icons";
 
     export let cartCount;
@@ -32,11 +34,19 @@
 
     function logout() {
         // this took a while to figure out... I think it's hacky to just reload it directly but oh well
-        router.post("/logout", undefined, { onSuccess: () => window.location.reload() });
+        router.post("/logout", undefined, {
+            onSuccess: () => window.location.reload(),
+        });
     }
 </script>
 
 <div class="sticky top-0 shadow-sm">
+    {#if !$page.props.user}
+        <Banner dismissable={false}>
+            <InfoCircleSolid class="mt-0.5" />
+            Please log in or sign up to order from the restaurant
+        </Banner>
+    {/if}
     <Navbar>
         <Link href="/">
             <NavBrand>
@@ -58,22 +68,22 @@
         </div>
         -->
         <div class="flex gap-1 h-10">
-            {#if displayCartButton}
-            <Button outline class="relative" on:click={() => openCart()}>
-                <CartOutline />
-                {#if cartCount > 0}
-                    <Indicator
-                        color="red"
-                        border
-                        size="xl"
-                        placement="top-right"
-                    >
-                        <span class="text-white text-xs font-bold"
-                            >{cartCount}</span
+            {#if $page.props.user && displayCartButton}
+                <Button outline class="relative" on:click={() => openCart()}>
+                    <CartOutline />
+                    {#if cartCount > 0}
+                        <Indicator
+                            color="red"
+                            border
+                            size="xl"
+                            placement="top-right"
                         >
-                    </Indicator>
-                {/if}
-            </Button>
+                            <span class="text-white text-xs font-bold"
+                                >{cartCount}</span
+                            >
+                        </Indicator>
+                    {/if}
+                </Button>
             {/if}
             <div>
                 {#if $page.props.user}
@@ -89,7 +99,12 @@
                         <DropdownItem on:click={logout}>Log out</DropdownItem>
                     </Dropdown>
                 {:else}
-                    <Button on:click={login}>Log In</Button>
+                    <Link href="/login">
+                        <Button color="alternative">Log in</Button>
+                    </Link>
+                    <Link href="/signup">
+                        <Button on:click={login}>Sign up</Button>
+                    </Link>
                 {/if}
             </div>
         </div>

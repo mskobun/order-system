@@ -12,8 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cart_items', function (Blueprint $table) {
-            $table->foreignId('item_id');
-            $table->foreignId('user_id');
+            $table->foreignId('item_id')
+                ->constrained('items')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
             $table->integer('amount');
             $table->unique(['user_id', 'item_id']);
         });

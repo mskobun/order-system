@@ -1,5 +1,5 @@
 <script>
-    import { inertia, Link, router } from "@inertiajs/svelte";
+    import { inertia, page, Link, router } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
     import MenuItem from "../Components/MenuItem.svelte";
     import { Drawer, CloseButton, Button } from "flowbite-svelte";
@@ -118,6 +118,7 @@
                             sideStripe
                             isAvailable={!!items[id].available}
                             showDescription={true}
+                            hideButton={!$page.props.user}
                         />
                     {/each}
                 </div>
