@@ -97,11 +97,22 @@ class LoginController extends Controller
             'email' => ['required', 'email'],
             'password' => [
                 'required', 
-                'confirmed', 
-                'min:6', 
                 'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/'
             ],
         ]);
+
+        $min_length = 6;
+        if (strlen($request->password) < $min_length) {
+            return back()->withErrors(
+                ['passwordLengthError' => "The password must be at least $min_length characters long"]
+            )->withInput($request->input());
+        }
+
+        if ($request->password !== $request->password_confirmation) {
+            return back()->withErrors(
+                ['passwordMatchError' => 'The passwords do not match!']
+            )->withInput($request->input());
+        }
 
         // ensuring the email is unique manually since the rule for it accesses the DB with an ORM
         $emails = DB::select(

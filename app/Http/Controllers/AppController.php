@@ -83,6 +83,15 @@ class AppController
         }
     }
 
+    public function displayProfile(Request $request): Response
+    {
+        return Inertia::render('Profile', [
+            'items' => self::renderItems(),
+            'cart' => self::renderCart($request->user()),
+            'open_cart' => $request->query('open_cart') == true,
+        ]);
+    }
+
     public function modify_cart(Request $request): RedirectResponse
     {
         $validated = $request->validate([
