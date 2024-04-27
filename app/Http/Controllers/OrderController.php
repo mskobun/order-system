@@ -28,6 +28,11 @@ class OrderController
         ]);
     }
 
+    public function list_orders(Request $request): Response
+    {
+
+    }
+
     // Copied from https://www.regular-expressions.info/creditcard.html
     const CC_REGEX = "/^(?:4[0-9]{12}(?:[0-9]{3})?|(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\d{3})\d{11})$/";
 
@@ -51,6 +56,35 @@ class OrderController
         // went through if the card number is valid.
         unset($validated['payment']);
 
+        // Validating items in the cart
+        // Check that the user has at least one item in the cart
+        $item_count = DB::scalar(
+            'SELECT COUNT(*) FROM cart_items WHERE user_id = ?',
+            [$request->user()->id]);
+        if ($item_count < 1) {
+            return back()
+                ->withInput($request->input())
+                ->withErrors(['items' => 'There are no items in the cart']);
+        }
+        // Check that all items in the cart are available
+        $unavailable_items = DB::select(
+            'SELECT items.name FROM cart_items
+            JOIN items ON cart_items.item_id = items.id
+            WHERE cart_items.user_id = ?
+            AND items.available = false',
+            [$request->user()->id]);
+        if (count($unavailable_items) > 0) {
+            $joined_items = collect($unavailable_items)
+                ->pluck('name')
+                ->join(',');
+            $error = 'Some items in your cart are no longer available: '.$joined_items.'. Please remove these items to proceed.';
+
+            return back()
+                ->withInput($request->input())
+                ->withErrors(['items' => $error]);
+
+        }
+
         // Prevent XSS by ensuring the HTML tags in user-provided
         // text fields will not be treated as such
         $validated['name'] = htmlentities($validated['name']);
@@ -73,8 +107,8 @@ class OrderController
                 'INSERT INTO orders
                 (user_id, type, address, phone, name)
                 VALUES (?, ?, ?, ?, ?);',
-        [$request->user()['id'], $orderType, $validated['address'],
-            $validated['phone'], $validated['name']]
+                [$request->user()->id, $orderType, $validated['address'],
+                    $validated['phone'], $validated['name']]
             );
 
             $order_id = DB::scalar('SELECT LAST_INSERT_ID()');
@@ -84,7 +118,7 @@ class OrderController
             SELECT item_id, amount
             FROM cart_items
             WHERE user_id = ?',
-                [$request->user()['id']]
+                [$request->user()->id]
             );
 
             foreach ($cart_items as $item) {
@@ -95,7 +129,7 @@ class OrderController
 
             // Clear the cart
             DB::statement('DELETE FROM cart_items WHERE user_id = ?',
-                [$request->user()['id']]);
+                [$request->user()->id]);
 
             // Create a new status entry.
             // Since we don't actually process payments, create both
@@ -115,7 +149,7 @@ class OrderController
             return to_route('order_status', ['order_id' => $order_id]);
 
         } catch (Exception $e) {
-            DB::statement("ROLLBACK;");
+            DB::statement('ROLLBACK;');
             throw $e;
         }
     }

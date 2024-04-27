@@ -1,7 +1,7 @@
 <script>
     import { page, router } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
-    import { Label, Card, Button, ButtonGroup } from "flowbite-svelte";
+    import { Label, Alert, Card, Button, ButtonGroup } from "flowbite-svelte";
     import Field from "../Components/Checkout/Field.svelte";
     import Section from "../Components/Checkout/Section.svelte";
 
@@ -88,6 +88,9 @@
             </Section>
             <Section>
                 <h1 class="text-2xl font-bold">Order Summary</h1>
+                {#if errors["items"]}
+                    <Alert color="red">{errors["items"]}</Alert>
+                {/if}
                 <div class="divide-y">
                     {#each order_items as item}
                         <div class="flex bg-white py-2 items-start gap-1">
