@@ -1,6 +1,7 @@
 <script>
     import { inertia, Link, router } from "@inertiajs/svelte";
     import { Input, Label, Helper, Button, Checkbox, Heading, A } from 'flowbite-svelte';
+    import Field from "../Components/Checkout/Field.svelte";
 
     // continuation is the url to jump to after login
     export let values = {
@@ -8,7 +9,7 @@
         password: null,
         remember: false,
         continuation: null,
-    };
+    }
 
     export let errors = {
         emailError: false,
@@ -33,22 +34,31 @@
                 </Heading>
                 <form class="space-y-4 md:space-y-6" on:submit|preventDefault={handleSubmit}>
                     <div>
-                        <Label for="email" class="mb-2" color={errors.emailError ? "red" : undefined}>Your email</Label>
-                        <Input bind:value={values.email} color={errors.emailError ? "red" : undefined} type="email" id="email" placeholder="example@test.com" required />
-                        {#if errors.emailError}
-                            <Helper class="text-sm font-light" color="red">
-                                The entered email doesn't exist in our database. <A href="/signup" class="font-medium">Sign up?</A>
-                            </Helper>
-                        {/if}
+                        <Field
+                            id="email"
+                            label="Your email"
+                            placeholder="example@test.com"
+                            bind:value={values.email}
+                            error={errors.emailError}
+                            errorText={"The entered email doesn't exist in our database"}
+                            type="email"
+                            required={true}
+                        >
+                            <A href="/signup" class="font-medium">Sign up?</A>
+                        </Field>
                     </div>
                     <div>
-                        <Label for="password" class="mb-2" color={errors.passwordError ? "red" : undefined}>Password</Label>
-                        <Input bind:value={values.password} color={errors.passwordError ? "red" : undefined} type="password" id="password" placeholder="••••••••" required />
-                        {#if errors.passwordError}
-                            <Helper class="text-sm font-light" color="red">
-                                Wrong password entered. 
-                            </Helper>
-                        {/if}
+                        <Field
+                            id="password"
+                            label="Password"
+                            placeholder="••••••••"
+                            bind:value={values.password}
+                            error={errors.passwordError}
+                            errorText={"Wrong password entered"}
+                            type="password"
+                            required={true}
+                        >
+                        </Field>
                     </div>
                     <div class="flex items-center justify-between">
                         <Checkbox bind:checked={values.remember} id="remember" class="space-x-1 rtl:space-x-reverse text-gray-500 dark:text-gray-300">Remember me</Checkbox>

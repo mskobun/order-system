@@ -98,11 +98,22 @@ class LoginController extends Controller
             'email' => ['required', 'email'],
             'password' => [
                 'required', 
-                'confirmed', 
-                'min:6', 
                 'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/'
             ],
         ]);
+
+        $min_length = 6;
+        if (strlen($request->password) < $min_length) {
+            return back()->withErrors(
+                ['passwordLengthError' => "The password must be at least $min_length characters long"]
+            )->withInput($request->input());
+        }
+
+        if ($request->password !== $request->password_confirmation) {
+            return back()->withErrors(
+                ['passwordMatchError' => 'The passwords do not match!']
+            )->withInput($request->input());
+        }
 
         // ensuring the email is unique manually since the rule for it accesses the DB with an ORM
         $emails = DB::select(
@@ -131,6 +142,35 @@ class LoginController extends Controller
         );
 
         return redirect("login");
+    }
+
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required'],
+            'email' => ['required'],
+            'phone' => ['required'],
+            'address' => ['required'],
+        ]);
+
+        $user = AuthUtils::getUser($request);
+
+        if (!is_null($user)) {
+            DB::statement(
+                'UPDATE users
+                SET name = ?,
+                    email = ?,
+                    phone = ?,
+                    address = ?
+                WHERE id = ?',
+                [$request['name'], $request['email'], $request['phone'], $request['address'],
+                $user['id']]
+            );
+        }
+
+        return to_route('profile')->withInput(
+            ['updated' => true]
+        );
     }
 
     public function logout(Request $request): RedirectResponse

@@ -18,6 +18,7 @@
     } from "flowbite-svelte-icons";
 
     export let cartCount;
+    export let displayCartButton = true;
 
     export let openCart = () => {
         router.get("/", { open_cart: true });
@@ -57,6 +58,7 @@
         </div>
         -->
         <div class="flex gap-1 h-10">
+            {#if displayCartButton}
             <Button outline class="relative" on:click={() => openCart()}>
                 <CartOutline />
                 {#if cartCount > 0}
@@ -72,6 +74,7 @@
                     </Indicator>
                 {/if}
             </Button>
+            {/if}
             <div>
                 {#if $page.props.user}
                     <Button pill color="alternative">
@@ -79,7 +82,7 @@
                         <ChevronDownOutline />
                     </Button>
                     <Dropdown>
-                        <DropdownItem class="font-bold"
+                        <DropdownItem href="/profile" class="font-bold"
                             >{$page.props.user.name}</DropdownItem
                         >
                         <DropdownDivider />
