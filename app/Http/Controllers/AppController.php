@@ -14,7 +14,13 @@ class AppController
 {
     private function renderMenu(): Collection
     {
-        $items_with_category = DB::select('select items.id, categories.name as category_name from items join items_categories on items.id = items_categories.item_id join categories on items_categories.category_id = categories.id order by categories.name, items.name asc');
+        $items_with_category = DB::select(
+            'SELECT items.id, categories.name AS category_name 
+            FROM items 
+            JOIN items_categories ON items.id = items_categories.item_id 
+            JOIN categories ON items_categories.category_id = categories.id 
+            ORDER BY categories.name, items.name ASC'
+        );
         $menu =
             collect($items_with_category)
                 ->groupBy('category_name')
@@ -32,7 +38,9 @@ class AppController
 
     private function renderItems(): Collection
     {
-        $items = DB::select('select * from items;');
+        $items = DB::select(
+            'SELECT * FROM items;'
+        );
         $itemMap = collect($items)->keyBy('id');
 
         return $itemMap;
@@ -40,7 +48,11 @@ class AppController
 
     private function renderCart(User $user): Collection
     {
-        $cart_items = DB::select('select item_id, amount from cart_items where user_id = ?', [$user['id']]);
+        $cart_items = DB::select(
+            'SELECT item_id, amount FROM cart_items 
+            WHERE user_id = ?', 
+            [$user['id']]
+        );
         $renderedCart = collect($cart_items)
             ->keyBy('item_id')
             ->map(function ($item, $key) {
@@ -70,14 +82,37 @@ class AppController
     public function modify_cart(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'id' => 'required|exists:items,id',
+            'id' => 'required',
             'amount' => 'required|integer',
         ]);
+
+        // validate if id exists in table
+        $ids = DB::select(
+            'SELECT * FROM items
+            WHERE id = ?',
+            [$request['id']]
+        );
+
+        if (count($ids) == 0) {
+            return back()->withInput($request->input())
+            ->withErrors(['id' => 'Item doesn\'t exist!']);
+        }
+
         if ($request->user()) {
             if ($validated['amount'] <= 0) {
-                DB::statement('delete from cart_items where user_id = ? and item_id = ?', [$request->user()['id'], $validated['id']]);
+                DB::statement(
+                    'DELETE FROM cart_items 
+                    WHERE user_id = ? AND item_id = ?', 
+                    [$request->user()['id'], $validated['id']]
+                );
             } else {
-                DB::statement('insert into cart_items (user_id, item_id, amount) values (?, ?, ?) on duplicate key update amount = ?', [$request->user()['id'], $validated['id'], $validated['amount'], $validated['amount']]);
+                DB::statement(
+                    'INSERT INTO cart_items (user_id, item_id, amount) 
+                    VALUES (?, ?, ?) 
+                    ON DUPLICATE KEY UPDATE amount = ?', 
+                    [$request->user()['id'], $validated['id'], $validated['amount'], 
+                    $validated['amount']]
+                );
             }
         }
 
