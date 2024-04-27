@@ -137,7 +137,13 @@ class AppController
 
     public function renderOrderItems($user)
     {
-        $items = DB::select('select cart_items.amount, items.* from cart_items join items on cart_items.item_id = items.id where user_id = ?;', [$user->id]);
+        $items = DB::select(
+            'SELECT cart_items.amount, items.* 
+            FROM cart_items 
+            JOIN items ON cart_items.item_id = items.id 
+            WHERE user_id = ?;', 
+            [$user->id]
+        );
 
         return $items;
     }
@@ -192,36 +198,50 @@ class AppController
         DB::statement('START TRANSACTION;');
         try {
             // Create the order first, and get the id
-            DB::statement('INSERT INTO orders
+            DB::statement(
+                'INSERT INTO orders
                 (user_id, type, address, phone, name)
                 VALUES (?, ?, ?, ?, ?);
                 ',
-                [AuthUtils::getUser($request)['id'], $orderType, $validated['address'], $validated['phone'], $validated['name']]);
+                [AuthUtils::getUser($request)['id'], $orderType, $validated['address'], $validated['phone'], $validated['name']]
+            );
 
             $order_id = DB::scalar('SELECT LAST_INSERT_ID()');
             // Then, add cart items to order items
-            $cart_items = DB::select('SELECT item_id, amount FROM cart_items where user_id = ?', [AuthUtils::getUser($request)['id']]);
+            $cart_items = DB::select(
+                'SELECT item_id, amount FROM cart_items 
+                where user_id = ?', 
+                [AuthUtils::getUser($request)['id']]
+            );
 
             foreach ($cart_items as $item) {
-                DB::statement('INSERT INTO order_items (order_id, item_id, amount) VALUES (?, ?, ?)', [$order_id, $item->item_id, $item->amount]);
+                DB::statement(
+                    'INSERT INTO order_items (order_id, item_id, amount) 
+                    VALUES (?, ?, ?)', 
+                    [$order_id, $item->item_id, $item->amount]
+                );
             }
 
             // Clear the cart
-            DB::statement('DELETE FROM cart_items WHERE user_id = ?',
-                [AuthUtils::getUser($request)['id']]);
+            DB::statement(
+                'DELETE FROM cart_items WHERE user_id = ?',
+                [AuthUtils::getUser($request)['id']]
+            );
 
             // Create a new status entry.
             // Since we don't actually process payments, create both
             // PAYMENT_PENDING and ACCEPTED statuses at the same time.
             DB::statement(
-                'INSERT INTO order_status
-                (order_id, created_at, status) VALUES (?, ?, ?)',
-                [$order_id, Carbon::now(), 'PAYMENT_PENDING']);
+                'INSERT INTO order_status (order_id, created_at, status) 
+                VALUES (?, ?, ?)',
+                [$order_id, Carbon::now(), 'PAYMENT_PENDING']
+            );
 
             DB::statement(
-                'INSERT INTO order_status
-                (order_id, created_at, status) VALUES (?, ?, ?)',
-                [$order_id, Carbon::now(), 'ACCEPTED']);
+                'INSERT INTO order_status (order_id, created_at, status) 
+                VALUES (?, ?, ?)',
+                [$order_id, Carbon::now(), 'ACCEPTED']
+            );
 
             // Create order status
                 DB::statement('COMMIT;');
