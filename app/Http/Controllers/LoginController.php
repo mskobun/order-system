@@ -143,6 +143,21 @@ class LoginController extends Controller
         return redirect("login");
     }
 
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required'],
+            'email' => ['required'],
+            'phone' => ['required'],
+            'address' => ['required'],
+        ]);
+
+        $user = $request->user();        
+        Log::debug($request->session()->all());
+
+        return back();
+    }
+
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
