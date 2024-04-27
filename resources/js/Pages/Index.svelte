@@ -1,5 +1,5 @@
 <script>
-    import { inertia, Link, router } from "@inertiajs/svelte";
+    import { inertia, page, Link, router } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
     import MenuItem from "../Components/MenuItem.svelte";
     import { Drawer, CloseButton, Button } from "flowbite-svelte";
@@ -113,6 +113,7 @@
                             modifyAmount={(addAmount) =>
                                 modifyCart(id, addAmount)}
                             sideStripe
+                            hideButton={!$page.props.user}
                         />
                     {/each}
                 </div>

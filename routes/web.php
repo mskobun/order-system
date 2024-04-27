@@ -6,10 +6,10 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AppController::class, 'index'])->name('index');
-Route::post('/cart/modify', [AppController::class, 'modify_cart']);
-Route::get('/order/confirm', [AppController::class, 'confirm_order_page']);
-Route::post('/order/submit', [AppController::class, 'submit_order']);
-Route::get('/order/{order_id}', [AppController::class, 'order_status'])->name('order_status');
+Route::post('/cart/modify', [AppController::class, 'modify_cart'])->middleware('auth');
+Route::get('/order/confirm', [AppController::class, 'confirm_order_page'])->middleware('auth');
+Route::post('/order/submit', [AppController::class, 'submit_order'])->middleware('auth');
+Route::get('/order/{order_id}', [AppController::class, 'order_status'])->middleware('auth')->name('order_status');
 Route::get('/users', [UserController::class, 'list']);
 Route::get('/auth_test', [UserController::class, 'list'])->middleware('auth');
 Route::post('/login_endpoint', [LoginController::class, 'authenticate']);

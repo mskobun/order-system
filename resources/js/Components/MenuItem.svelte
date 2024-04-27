@@ -2,6 +2,7 @@
     import { Button, ButtonGroup } from "flowbite-svelte";
     export let amount, modifyAmount, price, image_url, name;
     export let sideStripe = false;
+    export let hideButton = false;
 </script>
 
 <!-- The div is necessary here, so that the code outside the component
@@ -31,34 +32,36 @@ for it to figure it out. -->
                 {price.toFixed(2)}
             </h2>
             <div class="mb-2 mt-auto">
-                {#if amount == 0}
-                    <Button
-                        on:click={() => modifyAmount(1)}
-                        class="rounded-full w-8 h-8 p-2 inline-flex text-center text-xl"
-                    >
-                        +
-                    </Button>
-                {:else}
-                    <ButtonGroup size="xs" class="h-8">
+                {#if !hideButton}
+                    {#if amount == 0}
                         <Button
-                            pill
-                            on:click={() => {
-                                modifyAmount(-1);
-                            }}>-</Button
-                        >
-                        <!-- Not really a button, but I just wanted to use the ButtonGroup class -->
-                        <Button pill>
-                            {amount}
-                        </Button>
-                        <Button
-                            pill
-                            on:click={() => {
-                                modifyAmount(1);
-                            }}
+                            on:click={() => modifyAmount(1)}
+                            class="rounded-full w-8 h-8 p-2 inline-flex text-center text-xl"
                         >
                             +
                         </Button>
-                    </ButtonGroup>
+                    {:else}
+                        <ButtonGroup size="xs" class="h-8">
+                            <Button
+                                pill
+                                on:click={() => {
+                                    modifyAmount(-1);
+                                }}>-</Button
+                            >
+                            <!-- Not really a button, but I just wanted to use the ButtonGroup class -->
+                            <Button pill>
+                                {amount}
+                            </Button>
+                            <Button
+                                pill
+                                on:click={() => {
+                                    modifyAmount(1);
+                                }}
+                            >
+                                +
+                            </Button>
+                        </ButtonGroup>
+                    {/if}
                 {/if}
             </div>
         </div>
