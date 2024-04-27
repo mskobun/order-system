@@ -82,7 +82,7 @@
                         <ChevronDownOutline />
                     </Button>
                     <Dropdown>
-                        <DropdownItem class="font-bold"
+                        <DropdownItem href="/profile" class="font-bold"
                             >{$page.props.user.name}</DropdownItem
                         >
                         <DropdownDivider />

@@ -168,7 +168,7 @@ class LoginController extends Controller
             );
         }
 
-        return back()->withInput(
+        return to_route('profile')->withInput(
             ['updated' => true]
         );
     }
