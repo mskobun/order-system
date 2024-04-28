@@ -92,10 +92,18 @@
                         <ChevronDownOutline />
                     </Button>
                     <Dropdown>
-                        <DropdownItem href="/profile" class="font-bold"
-                            >{$page.props.user.name}</DropdownItem
-                        >
-                        <DropdownDivider />
+                        <div slot="header" class="px-4 p-2">
+                            <div class="font-bold text-sm">{$page.props.user.name} </div>
+                            <div class="text-sm"> {$page.props.user.email} </div>
+                        </div>
+                        <Link href="/profile">
+                            <DropdownItem>Edit Profile</DropdownItem>
+                        </Link>
+
+                        <Link href="/order/list">
+                            <DropdownItem>My Orders</DropdownItem>
+                        </Link>
+
                         <DropdownItem on:click={logout}>Log out</DropdownItem>
                     </Dropdown>
                 {:else}
