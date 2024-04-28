@@ -21,7 +21,7 @@ the compiled css. I guess tailwind only generates them
 if it sees a usage, and the logic becomes too complicated
 for it to figure it out. -->
     {#if showDescription}
-        <Popover class="w-72 text-sm font-light" placement="top-middle" title="Description" triggeredBy={"#item-" + id}>
+        <Popover class="w-72 text-sm" placement="top-middle" title="Description" triggeredBy={"#item-" + id}>
             {description !== "" ? description : "None"}
         </Popover>
     {/if}
