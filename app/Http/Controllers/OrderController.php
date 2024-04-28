@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\AuthUtils;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -22,7 +22,7 @@ class OrderController
             JOIN items
             ON cart_items.item_id = items.id
             WHERE user_id = ?
-            ORDER BY cart_items.amount DESC, items.name;', [$request->user()->id]);
+            ORDER BY cart_items.amount DESC, items.name;', [AuthUtils::getUser($request)->id]);
 
         return Inertia::render('ConfirmOrderAndPay', [
             'order_items' => $items,
@@ -36,7 +36,7 @@ class OrderController
             DB::select(
                 'SELECT * FROM orders
             WHERE user_id = ?
-            ORDER BY id DESC', [$request->user()->id])
+            ORDER BY id DESC', [AuthUtils::getUser($request)->id])
         );
         $orders = $orders->map(function ($order, $key) {
             $statuses = DB::select(
@@ -49,8 +49,10 @@ class OrderController
                 ORDER BY amount DESC, name', [$order->id]);
             $order->items = $items;
             $order->statuses = $statuses;
+
             return $order;
         });
+
         return Inertia::render('Orders', [
             'orders' => $orders]);
     }
@@ -82,7 +84,7 @@ class OrderController
         // Check that the user has at least one item in the cart
         $item_count = DB::scalar(
             'SELECT COUNT(*) FROM cart_items WHERE user_id = ?',
-            [$request->user()->id]);
+            [AuthUtils::getUser($request)->id]);
         if ($item_count < 1) {
             return back()
                 ->withInput($request->input())
@@ -94,7 +96,7 @@ class OrderController
             JOIN items ON cart_items.item_id = items.id
             WHERE cart_items.user_id = ?
             AND items.available = false',
-            [$request->user()->id]);
+            [AuthUtils::getUser($request)->id]);
         if (count($unavailable_items) > 0) {
             $joined_items = collect($unavailable_items)
                 ->pluck('name')
@@ -130,7 +132,7 @@ class OrderController
             JOIN items
             ON items.id = cart_items.item_id
             WHERE user_id = ?',
-                [$request->user()->id]
+                [AuthUtils::getUser($request)->id]
             );
 
             // This is not duplication, since we do not want future
@@ -144,7 +146,7 @@ class OrderController
                 'INSERT INTO orders
                 (user_id, type, address, phone, name, total)
                 VALUES (?, ?, ?, ?, ?, ?);',
-                [$request->user()->id, $orderType, $validated['address'],
+                [AuthUtils::getUser($request)->id, $orderType, $validated['address'],
                     $validated['phone'], $validated['name'], $total]
             );
 
@@ -159,7 +161,7 @@ class OrderController
 
             // Clear the cart
             DB::statement('DELETE FROM cart_items WHERE user_id = ?',
-                [$request->user()->id]);
+                [AuthUtils::getUser($request)->id]);
 
             // Create a new status entry.
             // Since we don't actually process payments, create both

@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\AuthUtils;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Http\Controllers;
-use App\Models\User;
-use PhpParser\Node\Expr\Cast\Bool_;
-use Illuminate\Support\Facades\Log;
-use App\AuthUtils;
 
 class LoginController extends Controller
 {
@@ -28,7 +23,7 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        $continuation = $request->continuation ?? "/";
+        $continuation = $request->continuation ?? '/';
 
         $remember = $request->boolean($request->remember);
 
@@ -46,7 +41,7 @@ class LoginController extends Controller
         )->withInput($request->only('email', 'remember', 'continuation'));
     }
 
-    public function attemptLogin(array $credentials, bool $remember, array & $errors): bool
+    public function attemptLogin(array $credentials, bool $remember, array &$errors): bool
     {
         $email = $credentials['email'];
         $password = $credentials['password'];
@@ -60,6 +55,7 @@ class LoginController extends Controller
 
         if (count($users) == 0) {
             $errors = array_merge($errors, ['emailError' => true]);
+
             return false;
         }
 
@@ -67,38 +63,37 @@ class LoginController extends Controller
 
         // checking credentials
         $success = Hash::check($password, $user->password);
-        
+
         if ($success) {
             // making an instance of the user model manually with data from the SQL statement, so I can use the login function
             $model_user = new User;
             $model_user->id = $user->id;
             $model_user->name = $user->name;
             $model_user->email = $user->email;
-            $model_user->email_verified_at = $user->email_verified_at;
             $model_user->password = $user->password;
-            $model_user->remember_token = $user->remember_token;
             $model_user->created_at = $user->created_at;
             $model_user->updated_at = $user->updated_at;
 
             AuthUtils::login($model_user, $remember);
-            
+
             return true;
         }
 
         $errors = array_merge($errors, ['passwordError' => true]);
+
         return false;
     }
 
     public function register(Request $request): RedirectResponse
     {
-        // automatically generates a redirect with errors corresponding to the keys here, 
+        // automatically generates a redirect with errors corresponding to the keys here,
         // like 'password' => The password field must be at least 6 characters
         $credentials = $request->validate([
             'name' => 'required',
             'email' => ['required', 'email'],
             'password' => [
-                'required', 
-                'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/'
+                'required',
+                'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/',
             ],
         ]);
 
@@ -121,7 +116,7 @@ class LoginController extends Controller
             WHERE email = ?',
             [$credentials['email']]
         );
-        
+
         if (count($emails) !== 0) {
             return back()->withErrors(
                 ['email' => 'This email already exists.']
@@ -136,12 +131,12 @@ class LoginController extends Controller
         $time = now();
 
         DB::statement(
-            'INSERT INTO users (name, email, password, email_verified_at, created_at, updated_at) 
-            VALUES (?, ?, ?, ?, ?, ?)', 
-            [$name, $email, $password, $time, $time, $time]
+            'INSERT INTO users (name, email, password, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?)',
+            [$name, $email, $password, $time, $time]
         );
 
-        return redirect("login");
+        return redirect('login');
     }
 
     public function updateProfile(Request $request): RedirectResponse
@@ -155,7 +150,7 @@ class LoginController extends Controller
 
         $user = AuthUtils::getUser($request);
 
-        if (!is_null($user)) {
+        if (! is_null($user)) {
             DB::statement(
                 'UPDATE users
                 SET name = ?,
@@ -164,7 +159,7 @@ class LoginController extends Controller
                     address = ?
                 WHERE id = ?',
                 [$request['name'], $request['email'], $request['phone'], $request['address'],
-                $user['id']]
+                    $user['id']]
             );
         }
 
@@ -177,6 +172,7 @@ class LoginController extends Controller
     {
         AuthUtils::logout();
         AuthUtils::invalidateSession($request);
+
         return back();
     }
 
