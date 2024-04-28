@@ -41,7 +41,7 @@ class OrderController
         $orders = $orders->map(function ($order, $key) {
             $statuses = DB::select(
                 'SELECT * FROM order_status
-                ORDER BY created_at DESC', []);
+                ORDER BY created_at DESC, status DESC', []);
             $items = DB::select(
                 'SELECT order_items.*
                 FROM order_items
