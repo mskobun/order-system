@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\AuthUtils;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\AuthUtils;
 
 class ManuallyEnsureAuth
 {
@@ -16,7 +16,7 @@ class ManuallyEnsureAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!AuthUtils::check($request)) {
+        if (! AuthUtils::check($request)) {
             return redirect('login');
         }
 

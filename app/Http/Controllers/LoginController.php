@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\AuthUtils;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Http\Controllers;
-use App\Models\User;
-use PhpParser\Node\Expr\Cast\Bool_;
-use Illuminate\Support\Facades\Log;
-use App\AuthUtils;
 
 class LoginController extends Controller
 {
@@ -28,7 +23,7 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        $continuation = $request->continuation ?? "/";
+        $continuation = $request->continuation ?? '/';
 
         $remember = $request->boolean($request->remember);
 
@@ -46,7 +41,7 @@ class LoginController extends Controller
         )->withInput($request->only('email', 'remember', 'continuation'));
     }
 
-    public function attemptLogin(array $credentials, bool $remember, array & $errors): bool
+    public function attemptLogin(array $credentials, bool $remember, array &$errors): bool
     {
         $email = $credentials['email'];
         $password = $credentials['password'];
@@ -60,6 +55,7 @@ class LoginController extends Controller
 
         if (count($users) == 0) {
             $errors = array_merge($errors, ['emailError' => true]);
+
             return false;
         }
 
@@ -84,6 +80,7 @@ class LoginController extends Controller
         }
 
         $errors = array_merge($errors, ['passwordError' => true]);
+
         return false;
     }
 
@@ -96,7 +93,7 @@ class LoginController extends Controller
             'email' => ['required', 'email'],
             'password' => [
                 'required',
-                'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/'
+                'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/',
             ],
         ]);
 
@@ -139,7 +136,7 @@ class LoginController extends Controller
             [$name, $email, $password, $time, $time]
         );
 
-        return redirect("login");
+        return redirect('login');
     }
 
     public function updateProfile(Request $request): RedirectResponse
@@ -153,7 +150,7 @@ class LoginController extends Controller
 
         $user = AuthUtils::getUser($request);
 
-        if (!is_null($user)) {
+        if (! is_null($user)) {
             DB::statement(
                 'UPDATE users
                 SET name = ?,
@@ -162,7 +159,7 @@ class LoginController extends Controller
                     address = ?
                 WHERE id = ?',
                 [$request['name'], $request['email'], $request['phone'], $request['address'],
-                $user['id']]
+                    $user['id']]
             );
         }
 
@@ -175,6 +172,7 @@ class LoginController extends Controller
     {
         AuthUtils::logout();
         AuthUtils::invalidateSession($request);
+
         return back();
     }
 

@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\AuthUtils;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use App\AuthUtils;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,8 +37,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            'user' => fn () =>
-            AuthUtils::getUser($request) ?
+            'user' => fn () => AuthUtils::getUser($request) ?
             collect(AuthUtils::getUser($request))
                 ->only('id', 'name', 'email', 'phone', 'address')
             : null,

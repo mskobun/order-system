@@ -49,8 +49,10 @@ class OrderController
                 ORDER BY amount DESC, name', [$order->id]);
             $order->items = $items;
             $order->statuses = $statuses;
+
             return $order;
         });
+
         return Inertia::render('Orders', [
             'orders' => $orders]);
     }

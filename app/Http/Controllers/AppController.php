@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\AuthUtils;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\AuthUtils;
 
 class AppController
 {
@@ -123,7 +122,7 @@ class AppController
                     VALUES (?, ?, ?)
                     ON DUPLICATE KEY UPDATE amount = ?',
                     [AuthUtils::getUser($request)->id, $validated['id'], $validated['amount'],
-                    $validated['amount']]
+                        $validated['amount']]
                 );
             }
         }

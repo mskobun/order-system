@@ -4,8 +4,8 @@ use App\Http\Controllers\AppController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\ManuallyEnsureAuth;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AppController::class, 'index'])->name('index');
 Route::post('/cart/modify', [AppController::class, 'modify_cart']);

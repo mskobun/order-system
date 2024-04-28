@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Auth\SessionGuard;
 
 class AuthUtils
 {
@@ -40,16 +39,18 @@ class AuthUtils
         // query it it
         $user_id = $request->session()->get(Auth::getFacadeRoot()->guard()->getName());
         if ($user_id) {
-            $res = DB::select("SELECT * FROM users WHERE id = ?", [$user_id]);
+            $res = DB::select('SELECT * FROM users WHERE id = ?', [$user_id]);
+
             return $res[0];
         } else {
-            return NULL;
+            return null;
         }
     }
 
     public static function check($request)
     {
         $user = AuthUtils::getUser($request);
-        return !is_null($user);
+
+        return ! is_null($user);
     }
 }
