@@ -3,7 +3,11 @@
     import Layout from "../Components/Layout.svelte";
     import MenuItem from "../Components/MenuItem.svelte";
     import { Drawer, CloseButton, Button } from "flowbite-svelte";
-    import { ArrowRightOutline } from "flowbite-svelte-icons";
+    import {
+        ArrowRightOutline,
+        CloseCircleOutline,
+        PlusOutline,
+    } from "flowbite-svelte-icons";
     import { sineIn } from "svelte/easing";
 
     let transitionParams = {
@@ -72,29 +76,48 @@
             />
         </div>
 
-        <div class="divide-y overflow-y-scroll">
-            {#each Object.entries(cart) as [id, amount]}
-                <MenuItem
-                    name={items[id].name}
-                    image_url={items[id].image_url}
-                    price={items[id].price * cart[id]}
-                    amount={cart[id] || 0}
-                    modifyAmount={(addAmount) => modifyCart(id, addAmount)}
-                    showDescription={false}
-                />
-            {/each}
-        </div>
-        <div class="mb-0 mt-auto">
-            <div class="mx-3 mt-3 flex justify-between text-xl">
-                <span> Total </span>
-                <span> RM {cartTotal.toFixed(2)} </span>
+        {#if cartCount == 0}
+            <div class="mb-auto mt-auto self-center">
+                <CloseCircleOutline color="gray" class="w-48 h-48" />
+                <span class="text-gray-600">
+                    There are no items in the cart
+                </span>
             </div>
-            <Link href="/order/confirm">
-                <Button class="mt-3 w-full font-bold text-lg">
-                    <span> Checkout </span>
-                    <ArrowRightOutline class="mt-0.5" />
+        {:else}
+            <div class="divide-y overflow-y-scroll">
+                {#each Object.entries(cart) as [id, amount]}
+                    <MenuItem
+                        name={items[id].name}
+                        image_url={items[id].image_url}
+                        price={items[id].price * cart[id]}
+                        amount={cart[id] || 0}
+                        modifyAmount={(addAmount) => modifyCart(id, addAmount)}
+                        showDescription={false}
+                    />
+                {/each}
+            </div>
+        {/if}
+        <div class="mb-0 mt-auto">
+            {#if cartCount == 0}
+                <Button
+                    on:click={() => (cartDrawerHidden = true)}
+                    class="mt-3 w-full font-bold text-lg"
+                >
+                    <PlusOutline class="mt-0.5" />
+                    <span> Add Items </span>
                 </Button>
-            </Link>
+            {:else}
+                <div class="mx-3 mt-3 flex justify-between text-xl">
+                    <span> Total </span>
+                    <span> RM {cartTotal.toFixed(2)} </span>
+                </div>
+                <Link href="/order/confirm">
+                    <Button class="mt-3 w-full font-bold text-lg">
+                        <span> Checkout </span>
+                        <ArrowRightOutline class="mt-0.5" />
+                    </Button>
+                </Link>
+            {/if}
         </div>
     </div>
 </Drawer>
@@ -107,7 +130,7 @@
                 <div class="md:grid md:grid-cols-3 md:gap-3 max-md:divide-y">
                     {#each category_items as id}
                         <MenuItem
-                            id={id}
+                            {id}
                             name={items[id].name}
                             description={items[id].description}
                             image_url={items[id].image_url}
