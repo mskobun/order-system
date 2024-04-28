@@ -9,14 +9,15 @@
     export let type = "text";
     export let placeholder;
     export let required = true;
-    export let className;
 </script>
 
-<Label for={id} {color} class="m-1">{label}</Label>
-<Input {id} {type} {color} {placeholder} class="m-1" bind:value {required}/>
-{#if error}
-    <Helper class="m-1" color="red">
-        {errorText} 
-        <slot></slot>
-    </Helper>
-{/if}
+<div>
+    <Label for={id} {color} class="">{label}</Label>
+    <Input {id} {type} {color} {placeholder} class="m-1" bind:value {required}/>
+    {#if error}
+        <Helper class="m-1" color="red">
+            {errorText} 
+            <slot></slot>
+        </Helper>
+    {/if}
+</div>

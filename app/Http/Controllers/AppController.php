@@ -86,7 +86,8 @@ class AppController
 
         return Inertia::render('Profile', [
             'user' => $user,
-            'updated' => $request->old('updated'),
+            'updatedProfile' => $request->old('updatedProfile'),
+            'updatedPassword' => $request->old('updatedPassword'),
         ]);
     }
 

@@ -11,6 +11,7 @@ Route::get('/', [AppController::class, 'index'])->name('index');
 Route::post('/cart/modify', [AppController::class, 'modify_cart']);
 Route::get('/profile', [AppController::class, 'displayProfile'])->name('profile');
 Route::post('/update_profile', [LoginController::class, 'updateProfile'])->name('update_profile');
+Route::post('/update_password', [LoginController::class, 'updatePassword'])->name('update_password');
 Route::post('/cart/modify', [AppController::class, 'modify_cart'])->middleware('auth');
 Route::get('/order/confirm', [OrderController::class, 'confirm_order'])->middleware('auth');
 Route::post('/order/submit', [OrderController::class, 'submit_order'])->middleware('auth');

@@ -10,23 +10,22 @@
         A,
     } from "flowbite-svelte";
     import Field from "../Components/Checkout/Field.svelte";
+    import PasswordBox from "../Components/PasswordBox.svelte";
 
     export let values = {
         name: null,
         email: null,
-        password: null,
-        password_confirmation: null,
         accept_terms: null,
     };
 
-    // the errors here match the names of the value fields
-    // they are
-    // email, password
-    // check for presence to know if they are triggered
+    export let passwords = {};
+
+    // the code just checks whether a certain key (error) is present here
     export let errors = {};
 
     function handleSubmit() {
-        router.post("/signup_endpoint", values);
+        let data = {...values, ...passwords};
+        router.post("/signup_endpoint", data);
     }
 </script>
 
@@ -71,46 +70,14 @@
                         type="email"
                         required={true}
                     >
-                        <Link href="/login" class="font-medium text-primary-600 dark:text-primary-500">Login?</Link>
+                        <Link
+                            href="/login"
+                            class="font-medium text-primary-600 dark:text-primary-500"
+                            >Login?</Link
+                        >
                     </Field>
-                    <Field
-                        id="password"
-                        label="Password"
-                        placeholder="••••••••"
-                        bind:value={values.password}
-                        error={errors.password ||
-                            errors.passwordLengthError}
-                        errorText={""}
-                        type="password"
-                        required={true}
-                    >
-                        {#if !errors.passwordLengthError}
-                            Your password must contain at least 3 of the
-                            following categories:
-                            <br />
-                            - Uppercase characters
-                            <br />
-                            - Lowercase characters
-                            <br />
-                            - Digits
-                            <br />
-                            - Special characters
-                            <br />
-                            - Unicode characters
-                        {:else}
-                            {errors.passwordLengthError}
-                        {/if}
-                    </Field>
-                    <Field
-                        id="confirm-password"
-                        label="Confirm Password"
-                        placeholder="••••••••"
-                        bind:value={values.password_confirmation}
-                        error={errors.passwordMatchError}
-                        errorText={errors.passwordMatchError}
-                        type="password"
-                        required={true}
-                    ></Field>
+
+                    <PasswordBox bind:values={passwords} {errors} className={"space-y-4 md:space-y-6"} required />
                     <div class="flex items-start">
                         <div class="flex items-center h-5">
                             <Checkbox
@@ -121,7 +88,8 @@
                             >
                                 I accept the <Link
                                     href="/terms_and_conditions"
-                                    class="font-medium text-primary-600 dark:text-primary-500">Terms and Conditions</Link
+                                    class="font-medium text-primary-600 dark:text-primary-500"
+                                    >Terms and Conditions</Link
                                 >
                             </Checkbox>
                         </div>
@@ -132,7 +100,8 @@
                     <Helper class="text-sm font-light">
                         Already have an account? <Link
                             href="/login"
-                            class="font-medium text-primary-600 dark:text-primary-500">Login</Link
+                            class="font-medium text-primary-600 dark:text-primary-500"
+                            >Login</Link
                         >
                     </Helper>
                 </form>
