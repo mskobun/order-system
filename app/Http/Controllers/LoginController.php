@@ -67,21 +67,19 @@ class LoginController extends Controller
 
         // checking credentials
         $success = Hash::check($password, $user->password);
-        
+
         if ($success) {
             // making an instance of the user model manually with data from the SQL statement, so I can use the login function
             $model_user = new User;
             $model_user->id = $user->id;
             $model_user->name = $user->name;
             $model_user->email = $user->email;
-            $model_user->email_verified_at = $user->email_verified_at;
             $model_user->password = $user->password;
-            $model_user->remember_token = $user->remember_token;
             $model_user->created_at = $user->created_at;
             $model_user->updated_at = $user->updated_at;
 
             AuthUtils::login($model_user, $remember);
-            
+
             return true;
         }
 
@@ -91,13 +89,13 @@ class LoginController extends Controller
 
     public function register(Request $request): RedirectResponse
     {
-        // automatically generates a redirect with errors corresponding to the keys here, 
+        // automatically generates a redirect with errors corresponding to the keys here,
         // like 'password' => The password field must be at least 6 characters
         $credentials = $request->validate([
             'name' => 'required',
             'email' => ['required', 'email'],
             'password' => [
-                'required', 
+                'required',
                 'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/'
             ],
         ]);
@@ -121,7 +119,7 @@ class LoginController extends Controller
             WHERE email = ?',
             [$credentials['email']]
         );
-        
+
         if (count($emails) !== 0) {
             return back()->withErrors(
                 ['email' => 'This email already exists.']
@@ -136,9 +134,9 @@ class LoginController extends Controller
         $time = now();
 
         DB::statement(
-            'INSERT INTO users (name, email, password, email_verified_at, created_at, updated_at) 
-            VALUES (?, ?, ?, ?, ?, ?)', 
-            [$name, $email, $password, $time, $time, $time]
+            'INSERT INTO users (name, email, password, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?)',
+            [$name, $email, $password, $time, $time]
         );
 
         return redirect("login");

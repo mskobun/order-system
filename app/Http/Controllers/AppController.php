@@ -47,12 +47,12 @@ class AppController
         return $itemMap;
     }
 
-    private function renderCart(User $user): Collection
+    private function renderCart($user): Collection
     {
         $cart_items = DB::select(
             'SELECT item_id, amount FROM cart_items
             WHERE user_id = ?',
-            [$user['id']]
+            [$user->id]
         );
         $renderedCart = collect($cart_items)
             ->keyBy('item_id')
@@ -115,14 +115,14 @@ class AppController
                 DB::statement(
                     'DELETE FROM cart_items
                     WHERE user_id = ? AND item_id = ?',
-                    [AuthUtils::getUser($request)['id'], $validated['id']]
+                    [AuthUtils::getUser($request)->id, $validated['id']]
                 );
             } else {
                 DB::statement(
                     'INSERT INTO cart_items (user_id, item_id, amount)
                     VALUES (?, ?, ?)
                     ON DUPLICATE KEY UPDATE amount = ?',
-                    [AuthUtils::getUser($request)['id'], $validated['id'], $validated['amount'],
+                    [AuthUtils::getUser($request)->id, $validated['id'], $validated['amount'],
                     $validated['amount']]
                 );
             }
