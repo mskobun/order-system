@@ -7,10 +7,12 @@
 
 <Layout>
     <div class="bg-zinc-50 flex-1">
-        <div class="m-5 max-w-screen-xl m-auto">
+        <div 
+            class="m-auto max-w-screen-md rounded-lg"
+        >
             <h1 class="text-3xl font-bold p-2">My Orders</h1>
             {#each orders as order}
-                <div class="bg-white w-full my-2 p-1">
+                <div class="bg-white w-full my-2 p-4 rounded-lg shadow dark:border dark:bg-gray-800 dark:border-gray-700">
                     <h2 class="text-2xl font-bold">Order #{order.id}</h2>
                     <div>
                         <b>Name:</b>

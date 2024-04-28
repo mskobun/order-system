@@ -54,7 +54,7 @@
     };
 </script>
 
-<Layout>
+<Layout displayCartButton>
     <div class="bg-zinc-50">
         <div class="m-5 max-w-screen-xl m-auto bg-white">
             <Section>
