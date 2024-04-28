@@ -8,7 +8,7 @@
 <Layout>
     <div class="bg-zinc-50 flex-1">
         <div 
-            class="m-auto max-w-screen-md rounded-lg"
+            class="m-auto max-w-2xl rounded-lg"
         >
             <h1 class="text-3xl font-bold p-2">My Orders</h1>
             {#each orders as order}
