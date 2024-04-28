@@ -61,8 +61,7 @@
                             bind:value={values.name}
                             type="text"
                             required={true}
-                        >
-                        </Field>
+                        ></Field>
                     </div>
                     <div>
                         <Field
@@ -75,7 +74,7 @@
                             type="email"
                             required={true}
                         >
-                            <A href="/login" class="font-medium">Login?</A>
+                            <Link href="/login" class="font-medium text-primary-600 dark:text-primary-500">Login?</Link>
                         </Field>
                     </div>
                     <div>
@@ -84,7 +83,8 @@
                             label="Password"
                             placeholder="••••••••"
                             bind:value={values.password}
-                            error={errors.password || errors.passwordLengthError}
+                            error={errors.password ||
+                                errors.passwordLengthError}
                             errorText={""}
                             type="password"
                             required={true}
@@ -117,8 +117,7 @@
                             errorText={errors.passwordMatchError}
                             type="password"
                             required={true}
-                        >
-                        </Field>
+                        ></Field>
                     </div>
                     <div class="flex items-start">
                         <div class="flex items-center h-5">
@@ -128,9 +127,9 @@
                                 class="space-x-1 rtl:space-x-reverse text-gray-500 dark:text-gray-300"
                                 required
                             >
-                                I accept the <A
+                                I accept the <Link
                                     href="/terms_and_conditions"
-                                    class="font-medium">Terms and Conditions</A
+                                    class="font-medium text-primary-600 dark:text-primary-500">Terms and Conditions</Link
                                 >
                             </Checkbox>
                         </div>
@@ -139,9 +138,9 @@
                         >Create an account</Button
                     >
                     <Helper class="text-sm font-light">
-                        Already have an account? <A
+                        Already have an account? <Link
                             href="/login"
-                            class="font-medium">Login</A
+                            class="font-medium text-primary-600 dark:text-primary-500">Login</Link
                         >
                     </Helper>
                 </form>

@@ -7,4 +7,8 @@ in pkgs.mkShell {
     git
     nodejs
   ];
+
+  shellHook = ''
+    code .
+  '';
 }
