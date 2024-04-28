@@ -3,12 +3,13 @@
     export let value;
     export let label;
     export let error;
-    export let errorText;
+    export let errorText = error;
     $: color = error ? "red" : "base";
     export let id;
     export let type = "text";
     export let placeholder;
     export let required = true;
+    export let className;
 </script>
 
 <Label for={id} {color} class="m-1">{label}</Label>

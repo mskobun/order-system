@@ -45,50 +45,42 @@
                             My profile
                         </Heading>
                         <form class="space-y-2 md:space-y-3" on:submit|preventDefault={handleSubmit}>
-                            <div>
-                                <Field
-                                    id="name"
-                                    label="Name"
-                                    placeholder="John Doe"
-                                    bind:value={user.name}
-                                    error={false}
-                                    type="text"
-                                    required={true}
-                                ></Field>
-                            </div>
-                            <div>
-                                <Field
-                                    id="email"
-                                    label="Email"
-                                    placeholder="example@test.com"
-                                    bind:value={user.email}
-                                    error={false}
-                                    type="email"
-                                    required={true}
-                                ></Field>
-                            </div>
-                            <div>
-                                <Field
-                                    id="phone"
-                                    label="Phone Number"
-                                    placeholder="012-3456789"
-                                    bind:value={user.phone}
-                                    error={false}
-                                    type="tel"
-                                    required={true}
-                                ></Field>
-                            </div>
-                            <div>
-                                <Field
-                                    id="address"
-                                    label="Address"
-                                    placeholder="House 3, Placeholder Street, Malaysia"
-                                    bind:value={user.address}
-                                    error={false}
-                                    type="text"
-                                    required={true}
-                                ></Field>
-                            </div>
+                            <Field
+                                id="name"
+                                label="Name"
+                                placeholder="John Doe"
+                                bind:value={user.name}
+                                error={false}
+                                type="text"
+                                required={true}
+                            ></Field>
+                            <Field
+                                id="email"
+                                label="Email"
+                                placeholder="example@test.com"
+                                bind:value={user.email}
+                                error={false}
+                                type="email"
+                                required={true}
+                            ></Field>
+                            <Field
+                                id="phone"
+                                label="Phone Number"
+                                placeholder="012-3456789"
+                                bind:value={user.phone}
+                                error={false}
+                                type="tel"
+                                required={true}
+                            ></Field>
+                            <Field
+                                id="address"
+                                label="Address"
+                                placeholder="House 3, Placeholder Street, Malaysia"
+                                bind:value={user.address}
+                                error={false}
+                                type="text"
+                                required={true}
+                            ></Field>
                             <Button type="submit">Update</Button>
                             {#if updated} 
                             <Helper class="m-1 text-sm" color="red">

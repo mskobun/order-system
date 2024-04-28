@@ -33,6 +33,17 @@
         },
     };
 
+    const updateProfile = () => {
+        let details = {
+            name: orderParams.name,
+            email: $page.props.user.email,
+            phone: orderParams.phone,
+            address: orderParams.address,
+        };
+
+        router.post("/update_profile", details);
+    };
+
     const submitOrder = () => {
         let sendParams = orderParams;
         if (sendParams.dineIn) {
@@ -86,6 +97,13 @@
                         bind:value={orderParams.address}
                     />
                 {/if}
+                <div class="mt-3">
+                    <Button
+                        on:click={() => updateProfile()}
+                    >
+                        Save Details to Account
+                    </Button>
+                </div>
             </Section>
             <Section>
                 <h1 class="text-2xl font-bold">Order Summary</h1>
@@ -117,6 +135,7 @@
                         label="Card Number"
                         type="number"
                         error={errors["payment.number"]}
+                        errorText={"Card number is invalid"}
                         bind:value={orderParams.payment.number}
                     />
 
@@ -130,6 +149,7 @@
                                         label="Month"
                                         type="number"
                                         error={errors["payment.expiryMonth"]}
+                                        errorText={"Month is invalid"}
                                         bind:value={orderParams.payment
                                             .expiryMonth}
                                     />
@@ -140,6 +160,7 @@
                                         label="Year"
                                         type="number"
                                         error={errors["payment.expiryYear"]}
+                                        errorText={"Year is invalid"}
                                         bind:value={orderParams.payment
                                             .expiryYear}
                                     />
@@ -152,6 +173,7 @@
                                 label="CVV"
                                 type="number"
                                 error={errors["payment.cvv"]}
+                                errorText={"CVV is invalid"}
                                 bind:value={orderParams.payment.cvv}
                             />
                         </div>

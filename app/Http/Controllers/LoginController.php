@@ -23,8 +23,6 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        $continuation = $request->continuation ?? '/';
-
         $remember = $request->boolean($request->remember);
 
         // passed into attemptLogin, and fills up with the errors generated
@@ -33,12 +31,12 @@ class LoginController extends Controller
         if (LoginController::attemptLogin($credentials, $remember, $errors)) {
             AuthUtils::regenerateSession($request);
 
-            return redirect($continuation);
+            return redirect('index');
         }
 
         return back()->withErrors(
             $errors
-        )->withInput($request->only('email', 'remember', 'continuation'));
+        )->withInput($request->only('email', 'remember'));
     }
 
     public function attemptLogin(array $credentials, bool $remember, array &$errors): bool
@@ -159,11 +157,11 @@ class LoginController extends Controller
                     address = ?
                 WHERE id = ?',
                 [$request['name'], $request['email'], $request['phone'], $request['address'],
-                    $user['id']]
+                    $user->id]
             );
         }
 
-        return to_route('profile')->withInput(
+        return back()->withInput(
             ['updated' => true]
         );
     }
@@ -173,7 +171,7 @@ class LoginController extends Controller
         AuthUtils::logout();
         AuthUtils::invalidateSession($request);
 
-        return back();
+        return redirect('index');
     }
 
     public function displayLogin(Request $request): Response
@@ -182,7 +180,6 @@ class LoginController extends Controller
             'email' => $request->old('email'),
             'password' => '',
             'remember' => $request->old('remember'),
-            'continuation' => parse_url(url()->previous(), PHP_URL_PATH),
         ];
 
         return Inertia::render('Login', ['values' => $values]);

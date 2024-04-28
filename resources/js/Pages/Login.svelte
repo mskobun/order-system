@@ -52,32 +52,28 @@
                     class="space-y-4 md:space-y-6"
                     on:submit|preventDefault={handleSubmit}
                 >
-                    <div>
-                        <Field
-                            id="email"
-                            label="Your email"
-                            placeholder="example@test.com"
-                            bind:value={values.email}
-                            error={errors.emailError}
-                            errorText={"The entered email doesn't exist in our database."}
-                            type="email"
-                            required={true}
-                        >
-                            <Link href="/signup" class="font-medium text-primary-600 dark:text-primary-500">Sign up?</Link>
-                        </Field>
-                    </div>
-                    <div>
-                        <Field
-                            id="password"
-                            label="Password"
-                            placeholder="••••••••"
-                            bind:value={values.password}
-                            error={errors.passwordError}
-                            errorText={"Wrong password entered"}
-                            type="password"
-                            required={true}
-                        ></Field>
-                    </div>
+                    <Field
+                        id="email"
+                        label="Your email"
+                        placeholder="example@test.com"
+                        bind:value={values.email}
+                        error={errors.emailError}
+                        errorText={"The entered email doesn't exist in our database."}
+                        type="email"
+                        required={true}
+                    >
+                        <Link href="/signup" class="font-medium text-primary-600 dark:text-primary-500">Sign up?</Link>
+                    </Field>
+                    <Field
+                        id="password"
+                        label="Password"
+                        placeholder="••••••••"
+                        bind:value={values.password}
+                        error={errors.passwordError}
+                        errorText={"Wrong password entered"}
+                        type="password"
+                        required={true}
+                    ></Field>
                     <div class="flex items-center justify-between">
                         <Checkbox
                             bind:checked={values.remember}

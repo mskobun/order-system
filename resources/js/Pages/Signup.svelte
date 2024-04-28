@@ -53,72 +53,64 @@
                     class="space-y-4 md:space-y-6"
                     on:submit|preventDefault={handleSubmit}
                 >
-                    <div>
-                        <Field
-                            id="name"
-                            label="Your Name"
-                            placeholder="John Doe"
-                            bind:value={values.name}
-                            type="text"
-                            required={true}
-                        ></Field>
-                    </div>
-                    <div>
-                        <Field
-                            id="email"
-                            label="Your Email"
-                            placeholder="example@test.com"
-                            bind:value={values.email}
-                            error={errors.email}
-                            errorText={errors.email}
-                            type="email"
-                            required={true}
-                        >
-                            <Link href="/login" class="font-medium text-primary-600 dark:text-primary-500">Login?</Link>
-                        </Field>
-                    </div>
-                    <div>
-                        <Field
-                            id="password"
-                            label="Password"
-                            placeholder="••••••••"
-                            bind:value={values.password}
-                            error={errors.password ||
-                                errors.passwordLengthError}
-                            errorText={""}
-                            type="password"
-                            required={true}
-                        >
-                            {#if !errors.passwordLengthError}
-                                Your password must contain at least 3 of the
-                                following categories:
-                                <br />
-                                - Uppercase characters
-                                <br />
-                                - Lowercase characters
-                                <br />
-                                - Digits
-                                <br />
-                                - Special characters
-                                <br />
-                                - Unicode characters
-                            {:else}
-                                {errors.passwordLengthError}
-                            {/if}
-                        </Field>
-                    </div>
-                    <div>
-                        <Field
-                            id="confirm-password"
-                            label="Confirm Password"
-                            placeholder="••••••••"
-                            bind:value={values.password_confirmation}
-                            error={errors.passwordMatchError}
-                            errorText={errors.passwordMatchError}
-                            type="password"
-                            required={true}
-                        ></Field>
-                    </div>
+                    <Field
+                        id="name"
+                        label="Your Name"
+                        placeholder="John Doe"
+                        bind:value={values.name}
+                        type="text"
+                        required={true}
+                    ></Field>
+                    <Field
+                        id="email"
+                        label="Your Email"
+                        placeholder="example@test.com"
+                        bind:value={values.email}
+                        error={errors.email}
+                        errorText={errors.email}
+                        type="email"
+                        required={true}
+                    >
+                        <Link href="/login" class="font-medium text-primary-600 dark:text-primary-500">Login?</Link>
+                    </Field>
+                    <Field
+                        id="password"
+                        label="Password"
+                        placeholder="••••••••"
+                        bind:value={values.password}
+                        error={errors.password ||
+                            errors.passwordLengthError}
+                        errorText={""}
+                        type="password"
+                        required={true}
+                    >
+                        {#if !errors.passwordLengthError}
+                            Your password must contain at least 3 of the
+                            following categories:
+                            <br />
+                            - Uppercase characters
+                            <br />
+                            - Lowercase characters
+                            <br />
+                            - Digits
+                            <br />
+                            - Special characters
+                            <br />
+                            - Unicode characters
+                        {:else}
+                            {errors.passwordLengthError}
+                        {/if}
+                    </Field>
+                    <Field
+                        id="confirm-password"
+                        label="Confirm Password"
+                        placeholder="••••••••"
+                        bind:value={values.password_confirmation}
+                        error={errors.passwordMatchError}
+                        errorText={errors.passwordMatchError}
+                        type="password"
+                        required={true}
+                    ></Field>
                     <div class="flex items-start">
                         <div class="flex items-center h-5">
                             <Checkbox
