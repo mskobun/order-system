@@ -27,10 +27,8 @@
     }
 </script>
 
-<Layout
-    displayCartButton={false}
->
-    <div class="bg-zinc-50 h-screen">
+<Layout>
+    <div class="bg-zinc-50 flex-1">
         <div class="flex flex-col items-center px-6 py-8 mx-auto lg:py-0">
             <div
                 class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-2xl xl:p-0 dark:bg-gray-800 dark:border-gray-700"

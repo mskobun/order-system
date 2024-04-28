@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Log;
 
 class OrderController
 {
@@ -24,8 +25,11 @@ class OrderController
             WHERE user_id = ?
             ORDER BY cart_items.amount DESC, items.name;', [AuthUtils::getUser($request)->id]);
 
+        Log::debug($request->old('updated'));
+
         return Inertia::render('ConfirmOrderAndPay', [
             'order_items' => $items,
+            'detailsUpdated' => $request->old('updated'),
         ]);
     }
 

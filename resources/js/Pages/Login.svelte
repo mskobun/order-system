@@ -11,12 +11,10 @@
     } from "flowbite-svelte";
     import Field from "../Components/Checkout/Field.svelte";
 
-    // continuation is the url to jump to after login
     export let values = {
         email: null,
         password: null,
         remember: false,
-        continuation: null,
     };
 
     export let errors = {

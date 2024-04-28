@@ -122,7 +122,7 @@
     </div>
 </Drawer>
 
-<Layout {cartCount} openCart={() => (cartDrawerHidden = false)}>
+<Layout {cartCount} openCart={() => (cartDrawerHidden = false)} displayCartButton>
     <div class="bg-zinc-50 h-screen">
         <div class="m-5 max-w-screen-xl m-auto">
             {#each menu as { name: category, items: category_items }}

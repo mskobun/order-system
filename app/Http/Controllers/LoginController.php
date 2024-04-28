@@ -31,7 +31,7 @@ class LoginController extends Controller
         if (LoginController::attemptLogin($credentials, $remember, $errors)) {
             AuthUtils::regenerateSession($request);
 
-            return redirect('index');
+            return redirect('/');
         }
 
         return back()->withErrors(
@@ -171,7 +171,7 @@ class LoginController extends Controller
         AuthUtils::logout();
         AuthUtils::invalidateSession($request);
 
-        return redirect('index');
+        return redirect('/');
     }
 
     public function displayLogin(Request $request): Response

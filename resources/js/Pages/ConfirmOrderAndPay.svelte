@@ -1,7 +1,7 @@
 <script>
     import { page, router } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
-    import { Label, Alert, Card, Button, ButtonGroup } from "flowbite-svelte";
+    import { Label, Alert, Card, Button, ButtonGroup, Helper } from "flowbite-svelte";
     import Field from "../Components/Checkout/Field.svelte";
     import Section from "../Components/Checkout/Section.svelte";
     import OrderItem from "../Components/OrderItem.svelte";
@@ -18,6 +18,7 @@
         (acc, item) => acc + item.price * item.amount,
         0,
     );
+    export let detailsUpdated = false;
 
     let orderParams = {
         name: $page.props.user.name || "",
@@ -103,6 +104,11 @@
                     >
                         Save Details to Account
                     </Button>
+                    {#if detailsUpdated} 
+                    <Helper class="m-1 text-sm" color="red">
+                        Updated!
+                    </Helper>
+                    {/if}
                 </div>
             </Section>
             <Section>

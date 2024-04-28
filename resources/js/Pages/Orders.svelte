@@ -6,7 +6,7 @@
 </script>
 
 <Layout>
-    <div class="bg-zinc-50">
+    <div class="bg-zinc-50 flex-1">
         <div class="m-5 max-w-screen-xl m-auto">
             <h1 class="text-3xl font-bold p-2">My Orders</h1>
             {#each orders as order}

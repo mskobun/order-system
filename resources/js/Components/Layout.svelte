@@ -20,7 +20,7 @@
     } from "flowbite-svelte-icons";
 
     export let cartCount;
-    export let displayCartButton = true;
+    export let displayCartButton = false;
 
     export let openCart = () => {
         router.get("/", { open_cart: true });
@@ -40,6 +40,7 @@
     }
 </script>
 
+<div class="h-screen flex flex-col">
 <div class="sticky top-0 shadow-sm">
     {#if !$page.props.user}
         <Banner dismissable={false}>
@@ -119,3 +120,5 @@
     </Navbar>
 </div>
 <slot />
+
+</div>
