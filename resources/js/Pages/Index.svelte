@@ -65,7 +65,7 @@
     bind:hidden={cartDrawerHidden}
     id="sidebar1"
     placement="right"
-    width="w-full md:w-96"
+    width="w-full md:w-[27rem]"
 >
     <div class="flex flex-col h-full justify-start">
         <div class="flex items-center py-3">
@@ -122,7 +122,11 @@
     </div>
 </Drawer>
 
-<Layout {cartCount} openCart={() => (cartDrawerHidden = false)} displayCartButton>
+<Layout
+    {cartCount}
+    openCart={() => (cartDrawerHidden = false)}
+    displayCartButton
+>
     <div class="bg-zinc-50 h-screen">
         <div class="m-5 max-w-screen-xl m-auto">
             {#each menu as { name: category, items: category_items }}

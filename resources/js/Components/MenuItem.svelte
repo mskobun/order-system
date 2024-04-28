@@ -21,17 +21,22 @@ the compiled css. I guess tailwind only generates them
 if it sees a usage, and the logic becomes too complicated
 for it to figure it out. -->
     {#if showDescription}
-        <Popover class="w-72 text-sm" placement="top-middle" title="Description" triggeredBy={"#item-" + id}>
+        <Popover
+            class="w-72 text-sm"
+            placement="top-middle"
+            title="Description"
+            triggeredBy={"#item-" + id}
+        >
             {description !== "" ? description : "None"}
         </Popover>
     {/if}
     <div
         class={(sideStripe && amount > 0
             ? "border-primary-600 border-l-4 p-1 flex md:rounded-md gap-3 bg-white"
-            : "border-white border-l-4 p-1 flex md:rounded-md gap-3 bg-white")
-            + (isAvailable ? "" : " grayscale opacity-90 pointer-events-none")}
+            : "border-white border-l-4 p-1 flex md:rounded-md gap-3 bg-white") +
+            (isAvailable ? "" : " grayscale opacity-90 pointer-events-none")}
     >
-        <img class="h-20 w-20" src={image_url} alt={name} id="menuimage" />
+        <img class="h-20 md:h-24" src={image_url} alt={name} id="menuimage" />
         <h2 class="text-lg text-black">
             {name}
         </h2>
