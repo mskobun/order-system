@@ -17,17 +17,19 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'phone' => '01412341234',
-            'address' => 'Menara IMC, No 8 Jalan Sultan Ismail, Kuala Lumpur, Malaysia',
-        ]);
-        DB::table('categories')->insert([
+        DB::table('users')->insertOrIgnore(
+            [
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+                'phone' => '01412341234',
+                'address' => 'Menara IMC, No 8 Jalan Sultan Ismail, Kuala Lumpur, Malaysia',
+            ]);
+
+        DB::table('categories')->insertOrIgnore([
             ['id' => 1, 'name' => 'Burgers'],
             ['id' => 2, 'name' => 'Desserts & Sides'],
             ['id' => 3, 'name' => 'Drinks']]);
-        DB::table('items')->insert([
+        DB::table('items')->insertOrIgnore([
             ['id' => 1, 'name' => 'Big Mac', 'description' => 'Two all-beef patties with lettuce, onions, pickles, cheese and special sauce in a toasted sesame seed bun.', 'price' => 14.20, 'available' => true, 'image_url' => '/storage/bigmac.png'],
             ['id' => 2, 'name' => 'Spicy Chicken McDeluxe', 'description' => 'Specially marinated whole chicken thigh meat with a delightfully crispy coat, layered with fresh lettuce and special sauce in a corn meal bun.', 'available' => true, 'price' => 14.35, 'image_url' => '/storage/spicy-mcdeluxe.png'],
             ['id' => 3, 'name' => 'Filet-O-Fish', 'description' => 'A classic favourite of a fish burger served with tartar sauce and cheddar cheese in a steamed bun.', 'available' => true, 'price' => 10.55, 'image_url' => '/storage/filetofish.png'],
@@ -40,7 +42,7 @@ class DatabaseSeeder extends Seeder
             ['id' => 10, 'name' => 'Iced Milo', 'description' => 'Theres nothing like an icy drink full of chocolate and malt flavours.', 'available' => true, 'price' => 8.30, 'image_url' => '/storage/milo-iced.png'],
 
         ]);
-        DB::table('items_categories')->insert([
+        DB::table('items_categories')->insertOrIgnore([
             ['item_id' => 1, 'category_id' => 1],
             ['item_id' => 2, 'category_id' => 1],
             ['item_id' => 3, 'category_id' => 1],
@@ -53,14 +55,14 @@ class DatabaseSeeder extends Seeder
             ['item_id' => 10, 'category_id' => 3],
         ]);
 
-        DB::table('promos')->insert([
+        DB::table('promos')->insertOrIgnore([
             [
                 'id' => 1,
                 'code' => 'DATABASES',
                 'begins_at' => Carbon::createFromDate(2024, 03, 04)->toDateTimeString(),
                 'ends_at' => Carbon::createFromDate(2024, 06, 04)->toDateTimeString(),
                 'discount' => 0.10,
-                'price_reduction' => 0.0
+                'price_reduction' => 0.0,
             ],
             [
                 'id' => 2,
@@ -70,6 +72,15 @@ class DatabaseSeeder extends Seeder
                 'discount' => 0.0,
                 'price_reduction' => 5.0,
             ],
+            [
+                'id' => 3,
+                'code' => 'EXPIRED',
+                'begins_at' => Carbon::createFromDate(2023, 03, 04)->toDateTimeString(),
+                'ends_at' => Carbon::createFromDate(2024, 01, 01)->toDateTimeString(),
+                'discount' => 0.10,
+                'price_reduction' => 0.0,
+            ],
+
         ]);
     }
 }
