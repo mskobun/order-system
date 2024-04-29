@@ -15,6 +15,9 @@ use Inertia\Response;
 // Handles endpoints related to customer orders
 class OrderController
 {
+    private static float $TAX = 0.06;
+    private static float $DELIVERY = 5.0;
+
     private static function addTotalsToOrder(&$order)
     {
         $subtotal = collect($order->items)->reduce(function ($carry, $item) {
@@ -24,8 +27,16 @@ class OrderController
         $order->subtotal = $subtotal;
 
         $totalAfterDelivery = $subtotal + $order->delivery_fee;
-        $totalAfterTax = $totalAfterDelivery + $totalAfterDelivery*$order->tax;
-        $totalAfterPercentDiscount = $totalAfterTax - $totalAfterTax*$order->discount;
+
+        $tax_amount = $totalAfterDelivery*$order->tax;
+        $order->tax_amount = $tax_amount;
+
+        $totalAfterTax = $totalAfterDelivery + $tax_amount;
+        
+        $discount_amount = $totalAfterTax*$order->discount;
+        $order->discount_amount = $discount_amount; 
+
+        $totalAfterPercentDiscount = $totalAfterTax - $discount_amount;
         $totalAfterPriceReduction = $totalAfterPercentDiscount - $order->price_reduction;
 
         if ($totalAfterPriceReduction < 0) {
@@ -48,9 +59,20 @@ class OrderController
             [AuthUtils::getUser($request)->id]
         );
 
+        $order = (object) [
+            'items' => $items
+        ];
+
+        $order->tax = OrderController::$TAX;
+        $order->delivery_fee = OrderController::$DELIVERY;
+        $order->price_reduction = 1.0;
+        $order->discount = 0.05;
+
+        OrderController::addTotalsToOrder($order);
+
         return Inertia::render('ConfirmOrderAndPay', [
-            'order_items' => $items,
             'detailsUpdated' => $request->old('updatedProfile'),
+            'orderDetails' => $order,
         ]);
     }
 
@@ -157,11 +179,11 @@ class OrderController
 
         // calculate delivery fee
         // temporary
-        $delivery = 5.0;
+        $delivery = OrderController::$DELIVERY;
 
         // fetch current tax
         // at the moment assume 6%
-        $tax = 0.06;
+        $tax = OrderController::$TAX;
 
         // calculating the discount percentage and price reduction
         // check if the entered promo code is valid or if there is an ongoing discount

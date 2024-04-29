@@ -18,13 +18,18 @@
         MapPinAltSolid,
         CreditCardSolid,
     } from "flowbite-svelte-icons";
+    import OrderSummary from "../Components/OrderSummary.svelte";
 
-    export let order_items;
     export let errors;
-    $: total = order_items.reduce(
-        (acc, item) => acc + item.price * item.amount,
-        0,
-    );
+    export let orderDetails = {
+        items: null,
+        tax: null,
+        delivery: null,
+        price_reduction: null, 
+        discount: null,
+        subtotal: null,
+        total: null,
+    }
     export let detailsUpdated = false;
 
     let orderParams = {
@@ -129,20 +134,7 @@
                         <Alert color="red">{errors["items"]}</Alert>
                     {/if}
                     <div class="divide-y">
-                        {#each order_items as item}
-                            <OrderItem
-                                name={item.name}
-                                amount={item.amount}
-                                price={item.price}
-                            />
-                        {/each}
-
-                        <div class="flex bg-white py-2 items-start gap-1">
-                            <h2 class="p-1 pl-0 font-bold">Total:</h2>
-                            <h2 class="p-1 font-bold mr-0 ml-auto">
-                                {total.toFixed(2)}
-                            </h2>
-                        </div>
+                        <OrderSummary {orderDetails}></OrderSummary>
                     </div>
                 </Section>
                 <Section>
