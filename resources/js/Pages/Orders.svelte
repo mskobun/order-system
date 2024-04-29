@@ -45,6 +45,10 @@
                             {order.address}
                         </div>
                     {/if}
+                    <div>
+                        <b>Date:</b>
+                        {order.statuses[0].created_at}
+                    </div>
 
                     <div>
                         <b>Latest Status:</b>

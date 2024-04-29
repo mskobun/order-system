@@ -11,10 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->float('total');
-        });
-
         Schema::table('order_items', function (Blueprint $table) {
             $table->float('price');
             $table->string('name');
@@ -26,10 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn(['total']);
-        });
-
         Schema::table('order_items', function (Blueprint $table) {
             $table->dropColumn(['price', 'name']);
         });

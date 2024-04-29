@@ -15,6 +15,15 @@ use Inertia\Response;
 // Handles endpoints related to customer orders
 class OrderController
 {
+    private static function calculateOrderTotal($order): float
+    {
+        $total = collect($order->items)->reduce(function ($carry, $item) {
+            return $carry + $item->price * $item->amount;
+        }, 0);
+
+        return $total;
+    }
+
     // Renders the order confirmation page
     public function confirmOrder(Request $request): Response
     {
@@ -41,8 +50,8 @@ class OrderController
         $orders = collect(
             DB::select(
                 'SELECT * FROM orders
-            WHERE user_id = ?
-            ORDER BY id DESC',
+                WHERE user_id = ?
+                ORDER BY id DESC',
                 [AuthUtils::getUser($request)->id]
             )
         );
@@ -61,6 +70,9 @@ class OrderController
             );
             $order->items = $items;
             $order->statuses = $statuses;
+
+            // calculate total
+            $order->total = OrderController::calculateOrderTotal($order);
 
             return $order;
         });
@@ -145,20 +157,14 @@ class OrderController
                 [AuthUtils::getUser($request)->id]
             );
 
-            // This is not duplication, since we do not want future
-            // name/price/menu changes to affect orders already made
-            $total = collect($cart_items)->reduce(function ($carry, $item) {
-                return $carry + $item->price * $item->amount;
-            }, 0);
-
             // Create the order first, and get the id
             DB::statement(
                 'INSERT INTO orders
-                (user_id, type, address, phone, name, total)
-                VALUES (?, ?, ?, ?, ?, ?);',
+                (user_id, type, address, phone, name)
+                VALUES (?, ?, ?, ?, ?);',
                 [
                     AuthUtils::getUser($request)->id, $orderType, $validated['address'],
-                    $validated['phone'], $validated['name'], $total,
+                    $validated['phone'], $validated['name'],
                 ]
             );
 
