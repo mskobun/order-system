@@ -3,6 +3,22 @@
     import OrderItem from "../Components/OrderItem.svelte";
 
     export let orders;
+
+    const orderTypes = {
+        DELIVERY: "Delivery",
+        DINE_IN: "Dine in",
+    };
+
+    const statusTypes = {
+        PAYMENT_PENDING: "Payment pending",
+        ACCEPTED: "Accepted",
+        COOKING: "In the kitchen",
+        CANCELLED: "Cancelled",
+        COMPLETED: "Completed",
+        DELIVERY_WAITING_FOR_PICKUP:
+            "Waiting for the driver to pick up the order",
+        DELIVERY_ON_THE_ROAD: "On the road",
+    };
 </script>
 
 <Layout>
@@ -21,7 +37,7 @@
 
                     <div>
                         <b>Type:</b>
-                        {order.type}
+                        {orderTypes[order.type]}
                     </div>
                     {#if order.type == "DELIVERY"}
                         <div>
@@ -32,7 +48,7 @@
 
                     <div>
                         <b>Latest Status:</b>
-                        {order.statuses[0].status}
+                        {statusTypes[order.statuses[0].status]}
                     </div>
 
                     {#each order.items as { name, amount, price }}
