@@ -93,6 +93,7 @@ class LoginController
         // - Digits
         // - Special characters
         // - Unicode characters
+        // Credit: https://stackoverflow.com/questions/31539727/laravel-password-validation-rule
         if (preg_match('/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/', $password) !== 1) {
             $errors = array_merge($errors, ['passwordRegexError' => 'The password didn\'t fit the specified format']);
             $hadError = true;
@@ -146,9 +147,8 @@ class LoginController
         }
 
         // Preparing to register a new account
-        // Use of htmlentities to prevent XSS
-        $name = htmlentities($credentials['name']);
-        $email = htmlentities($credentials['email']);
+        $name = $credentials['name'];
+        $email = $credentials['email'];
         $password = Hash::make($credentials['newPassword']);
         $time = now();
 
@@ -173,11 +173,10 @@ class LoginController
 
         $user = AuthUtils::getUser($request);
 
-        // htmlentities to prevent XSS
-        $name = htmlentities($request['name']);
-        $email = htmlentities($request['email']);
-        $phone = htmlentities($request['phone']);
-        $address = htmlentities($request['address']);
+        $name = $request['name'];
+        $email = $request['email'];
+        $phone = $request['phone'];
+        $address = $request['address'];
         $id = $user->id;
 
         if (!is_null($user)) {

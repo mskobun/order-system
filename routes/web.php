@@ -24,4 +24,3 @@ Route::post('/cart/modify', [AppController::class, 'modifyCart'])->middleware('a
 Route::get('/order/confirm', [OrderController::class, 'confirmOrder'])->middleware('auth')->name('confirm_order');
 Route::post('/order/submit', [OrderController::class, 'submitOrder'])->middleware('auth')->name('submit_order');
 Route::get('/order/list', [OrderController::class, 'listOrders'])->middleware('auth')->name('list_orders');
-

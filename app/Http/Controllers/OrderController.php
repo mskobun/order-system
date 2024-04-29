@@ -124,14 +124,8 @@ class OrderController
                 ->withErrors(['items' => $error]);
         }
 
-        // Prevent XSS by ensuring the HTML tags in user-provided
-        // text fields will not be treated as such
-        $validated['name'] = htmlentities($validated['name']);
-        $validated['phone'] = htmlentities($validated['phone']);
-
-        if (array_key_exists('address', $validated)) {
-            $validated['address'] = htmlentities($validated['address']);
-        } else {
+        // sets the address to null if it doesn't exist
+        if (!array_key_exists('address', $validated)) {
             $validated['address'] = null;
         }
 
