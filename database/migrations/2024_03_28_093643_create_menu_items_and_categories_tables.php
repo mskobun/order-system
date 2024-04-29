@@ -24,8 +24,14 @@ return new class extends Migration
             $table->string('name');
         });
         Schema::create('items_categories', function (Blueprint $table) {
-            $table->foreignId('item_id');
-            $table->foreignId('category_id');
+            $table->foreignId('item_id')
+                ->constrained()
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->foreignId('category_id')
+                ->constrained()
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
 
     }
