@@ -11,13 +11,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Log;
 
 // Handles endpoints related to customer orders
 class OrderController
 {
-    private static float $TAX = 0.06;
+    private const TAX = 0.06;
 
-    private static float $DELIVERY = 5.0;
+    private const DELIVERY = 5.0;
 
     private static function addTotalsToOrder(&$order)
     {
@@ -91,8 +92,16 @@ class OrderController
             'items' => $items,
         ];
 
-        $order->tax = OrderController::$TAX;
-        $order->delivery_fee = OrderController::$DELIVERY;
+        Log::debug($request->dineIn);
+
+        $deliveryValue = false ? 0 : self::DELIVERY;
+
+        Log::debug($deliveryValue);
+
+        $order->delivery_fee = $deliveryValue;
+
+        $order->tax = OrderController::TAX;
+
         $order->price_reduction = 0;
         $order->discount = 0;
         
@@ -215,11 +224,22 @@ class OrderController
 
         // calculate delivery fee
         // temporary
-        $delivery = OrderController::$DELIVERY;
+        $delivery = 5;
+
+        $dineIn = false;
+        if (!is_null($request->dineIn)) {
+            $dineIn = $request->dineIn;
+        }
+
+        if ($dineIn) {
+            $delivery = 0;
+        } else {
+            $delivery = OrderController::DELIVERY;
+        }
 
         // fetch current tax
         // at the moment assume 6%
-        $tax = OrderController::$TAX;
+        $tax = OrderController::TAX;
 
         // calculating the discount percentage and price reduction
         // check if the entered promo code is valid or if there is an ongoing discount

@@ -50,14 +50,15 @@
         voucher: null,
     };
 
-    const applyVoucher = () => {
+    const applyChanges = () => {
         orderParams.voucher = voucherCode;
 
-        let voucherDetails = {
+        let details = {
+            dineIn: orderParams.dineIn,
             voucher: orderParams.voucher,
         };
         
-        router.get("/order/confirm", voucherDetails);
+        router.get("/order/confirm", details);
     };
 
     const updateProfile = () => {
@@ -107,7 +108,7 @@
                             color={orderParams.dineIn
                                 ? "primary"
                                 : "alternative"}
-                            on:click={() => (orderParams.dineIn = true)}
+                            on:click={() => {orderParams.dineIn = true; applyChanges();}}
                         >
                             <StoreSolid size="md" />
                             Dine In</Button
@@ -117,7 +118,7 @@
                             color={!orderParams.dineIn
                                 ? "primary"
                                 : "alternative"}
-                            on:click={() => (orderParams.dineIn = false)}
+                            on:click={() => {orderParams.dineIn = false; applyChanges();}}
                         >
                             <MapPinAltSolid size="md" />
                             Delivery</Button
@@ -152,7 +153,7 @@
                         bind:value={voucherCode}
                     />
                     <div class="mt-3">
-                        <Button on:click={() => applyVoucher()}>
+                        <Button on:click={() => applyChanges()}>
                             Apply Voucher
                         </Button>
                         {#if voucherApplied}
