@@ -1,7 +1,11 @@
 <script>
     import { router } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
-    import { Helper, Button, Heading } from "flowbite-svelte";
+    import {
+        Helper,
+        Button,
+        Heading,
+    } from "flowbite-svelte";
     import Field from "../Components/Field.svelte";
     import PasswordBox from "../Components/PasswordBox.svelte";
 
@@ -30,21 +34,24 @@
 
 <Layout>
     <div class="bg-zinc-50 flex-1">
-        <div class="flex flex-col items-center px-6 py-8 mx-auto lg:py-0">
+        <div class="flex flex-col items-center mx-auto max-w-2xl">
+            <Heading tag="h1" customSize="text-3xl font-bold p-2">
+                My Profile
+            </Heading>
             <div
-                class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-2xl xl:p-0 dark:bg-gray-800 dark:border-gray-700"
+                class="w-full my-2 bg-white rounded-lg shadow dark:border dark:bg-gray-800 dark:border-gray-700"
             >
                 <div class="flex flex-row w-full">
                     <div class="flex flex-col w-full h-full">
                         <div
-                            class="p-6 space-y-2 md:space-y-2 sm:p-8 flex-grow"
+                            class="p-6 flex-grow"
                         >
                             <Heading
                                 tag="h1"
                                 class="mb-4"
                                 customSize="text-xl font-bold md:text-2xl"
                             >
-                                My profile
+                                User Details
                             </Heading>
                             <form
                                 class="space-y-2 md:space-y-3"
@@ -94,7 +101,7 @@
                                 {/if}
                             </form>
                         </div>
-                        <div class="pt-0 p-8 flex-grow">
+                        <div class="pt-0 p-6 flex-grow">
                             <Heading
                                 tag="h1"
                                 class="mb-4"
