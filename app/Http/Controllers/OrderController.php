@@ -16,6 +16,7 @@ use Inertia\Response;
 class OrderController
 {
     private static float $TAX = 0.06;
+
     private static float $DELIVERY = 5.0;
 
     private static function addTotalsToOrder(&$order)
@@ -28,13 +29,13 @@ class OrderController
 
         $totalAfterDelivery = $subtotal + $order->delivery_fee;
 
-        $tax_amount = $totalAfterDelivery*$order->tax;
+        $tax_amount = $totalAfterDelivery * $order->tax;
         $order->tax_amount = $tax_amount;
 
         $totalAfterTax = $totalAfterDelivery + $tax_amount;
-        
-        $discount_amount = $totalAfterTax*$order->discount;
-        $order->discount_amount = $discount_amount; 
+
+        $discount_amount = $totalAfterTax * $order->discount;
+        $order->discount_amount = $discount_amount;
 
         $totalAfterPercentDiscount = $totalAfterTax - $discount_amount;
         $totalAfterPriceReduction = $totalAfterPercentDiscount - $order->price_reduction;
@@ -44,6 +45,33 @@ class OrderController
         }
 
         $order->total = $totalAfterPriceReduction;
+    }
+
+    public function applyVoucher(string $voucherCode, float &$price_reduction, float &$discount, bool &$invalidVoucher): bool
+    {
+        $voucher = DB::select(
+            'SELECT * FROM promos 
+            WHERE code = ?',
+            [$voucherCode]
+        );
+
+        if (count($voucher) == 0) {
+            $invalidVoucher = true;
+            return false;
+        }
+
+        $time_start = strtotime($voucher[0]->begins_at);
+        $time_end = strtotime($voucher[0]->ends_at);
+        $cur_time = time();
+
+        if (!($cur_time > $time_start && $cur_time < $time_end)) {
+            $invalidVoucher = true;
+            return false;
+        }
+ 
+        $price_reduction += $voucher[0]->price_reduction;
+        $discount += $voucher[0]->discount;
+        return true;
     }
 
     // Renders the order confirmation page
@@ -60,19 +88,27 @@ class OrderController
         );
 
         $order = (object) [
-            'items' => $items
+            'items' => $items,
         ];
 
         $order->tax = OrderController::$TAX;
         $order->delivery_fee = OrderController::$DELIVERY;
-        $order->price_reduction = 1.0;
-        $order->discount = 0.05;
+        $order->price_reduction = 0;
+        $order->discount = 0;
+        
+        $invalidVoucher = false;
+        $voucherApplied = false;
+        if ($request->voucher) {
+            $voucherApplied = OrderController::applyVoucher($request->voucher, $order->price_reduction, $order->discount, $invalidVoucher);
+        }
 
         OrderController::addTotalsToOrder($order);
 
         return Inertia::render('ConfirmOrderAndPay', [
             'detailsUpdated' => $request->old('updatedProfile'),
             'orderDetails' => $order,
+            'voucherApplied' => $voucherApplied, 
+            'invalidVoucher' => $invalidVoucher,
         ]);
     }
 
@@ -187,9 +223,13 @@ class OrderController
 
         // calculating the discount percentage and price reduction
         // check if the entered promo code is valid or if there is an ongoing discount
-        // at the moment for testing, assume a 5% discount and 1.0 price reduction
-        $price_reduction = 1.0;
-        $discount = 0.05;
+        $price_reduction = 0;
+        $discount = 0;
+
+        $invalidVoucher = false;
+        if ($request->voucher) {
+            OrderController::applyVoucher($request->voucher, $price_reduction, $discount, $invalidVoucher);
+        }
 
         // Wrap in a transaction, so that if something fails during the insertion,
         // noting will be inserted, instead of having dangling data

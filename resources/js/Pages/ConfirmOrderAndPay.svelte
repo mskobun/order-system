@@ -31,7 +31,10 @@
         total: null,
     }
     export let detailsUpdated = false;
+    export let voucherApplied = false;
+    export let invalidVoucher = false;
 
+    let voucherCode = null;
     let orderParams = {
         name: $page.props.user.name || "",
         phone: $page.props.user.phone || "",
@@ -44,6 +47,17 @@
             expiryYear: null,
             cvv: null,
         },
+        voucher: null,
+    };
+
+    const applyVoucher = () => {
+        orderParams.voucher = voucherCode;
+
+        let voucherDetails = {
+            voucher: orderParams.voucher,
+        };
+        
+        router.get("/order/confirm", voucherDetails);
     };
 
     const updateProfile = () => {
@@ -127,6 +141,27 @@
                             </Helper>
                         {/if}
                     </div>
+                </Section>
+                <Section>
+                    <h1 class="text-2xl font-bold mb-3 mt-7">Voucher</h1>
+                    <Field
+                        id="voucher-field"
+                        label="Voucher Code"
+                        error={invalidVoucher}
+                        errorText={"Invalid Voucher"}
+                        bind:value={voucherCode}
+                    />
+                    <div class="mt-3">
+                        <Button on:click={() => applyVoucher()}>
+                            Apply Voucher
+                        </Button>
+                        {#if voucherApplied}
+                            <Helper class="m-1 text-sm" color="red">
+                                Voucher Applied!
+                            </Helper>
+                        {/if}
+                    </div>
+
                 </Section>
                 <Section>
                     <h1 class="text-2xl font-bold mt-7">Order Summary</h1>

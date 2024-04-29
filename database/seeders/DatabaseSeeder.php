@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -52,5 +53,23 @@ class DatabaseSeeder extends Seeder
             ['item_id' => 10, 'category_id' => 3],
         ]);
 
+        DB::table('promos')->insert([
+            [
+                'id' => 1,
+                'code' => 'DATABASES',
+                'begins_at' => Carbon::createFromDate(2024, 03, 04)->toDateTimeString(),
+                'ends_at' => Carbon::createFromDate(2024, 06, 04)->toDateTimeString(),
+                'discount' => 0.10,
+                'price_reduction' => 0.0
+            ],
+            [
+                'id' => 2,
+                'code' => 'LUCKYFIVE',
+                'begins_at' => Carbon::createFromDate(2024, 03, 04)->toDateTimeString(),
+                'ends_at' => Carbon::createFromDate(2024, 06, 04)->toDateTimeString(),
+                'discount' => 0.0,
+                'price_reduction' => 5.0,
+            ],
+        ]);
     }
 }
