@@ -92,11 +92,9 @@ class OrderController
             'items' => $items,
         ];
 
-        Log::debug($request->dineIn);
+        $dineIn = $request->dineIn === 'true';
 
-        $deliveryValue = false ? 0 : self::DELIVERY;
-
-        Log::debug($deliveryValue);
+        $deliveryValue = $dineIn ? 0 : OrderController::DELIVERY;
 
         $order->delivery_fee = $deliveryValue;
 
@@ -222,20 +220,9 @@ class OrderController
 
         $orderType = ($validated['dineIn']) ? 'DINE_IN' : 'DELIVERY';
 
-        // calculate delivery fee
-        // temporary
-        $delivery = 5;
+        $deliveryValue = $validated['dineIn'] ? 0 : OrderController::DELIVERY;
 
-        $dineIn = false;
-        if (!is_null($request->dineIn)) {
-            $dineIn = $request->dineIn;
-        }
-
-        if ($dineIn) {
-            $delivery = 0;
-        } else {
-            $delivery = OrderController::DELIVERY;
-        }
+        $delivery = $deliveryValue;
 
         // fetch current tax
         // at the moment assume 6%
