@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
+// Handles endpoints related to the main app pages
 class AppController
 {
     private function renderMenu(): Collection
@@ -21,17 +22,18 @@ class AppController
             JOIN categories ON items_categories.category_id = categories.id
             ORDER BY categories.name, items.name ASC'
         );
+
         $menu =
             collect($items_with_category)
-                ->groupBy('category_name')
-                ->map(function ($items, $category_name) {
-                    $items = $items->map(function ($item, $key) {
-                        return $item->id;
-                    });
+            ->groupBy('category_name')
+            ->map(function ($items, $category_name) {
+                $items = $items->map(function ($item, $key) {
+                    return $item->id;
+                });
 
-                    return ['name' => $category_name, 'items' => $items];
-                })
-                ->values();
+                return ['name' => $category_name, 'items' => $items];
+            })
+            ->values();
 
         return $menu;
     }
@@ -53,6 +55,7 @@ class AppController
             WHERE user_id = ?',
             [$user->id]
         );
+
         $renderedCart = collect($cart_items)
             ->keyBy('item_id')
             ->map(function ($item, $key) {
@@ -60,12 +63,11 @@ class AppController
             });
 
         return $renderedCart;
-
     }
 
     public function index(Request $request): Response
     {
-        if (AuthUtils::getUser($request)) {
+        if (AuthUtils::check($request)) {
             return Inertia::render('Index', [
                 'menu' => self::renderMenu(),
                 'items' => self::renderItems(),
@@ -80,18 +82,7 @@ class AppController
         }
     }
 
-    public function displayProfile(Request $request): Response
-    {
-        $user = AuthUtils::getUser($request);
-
-        return Inertia::render('Profile', [
-            'user' => $user,
-            'updatedProfile' => $request->old('updatedProfile'),
-            'updatedPassword' => $request->old('updatedPassword'),
-        ]);
-    }
-
-    public function modify_cart(Request $request): RedirectResponse
+    public function modifyCart(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'id' => 'required',
@@ -110,7 +101,7 @@ class AppController
                 ->withErrors(['id' => 'Item doesn\'t exist!']);
         }
 
-        if (AuthUtils::getUser($request)) {
+        if (AuthUtils::check($request)) {
             if ($validated['amount'] <= 0) {
                 DB::statement(
                     'DELETE FROM cart_items
@@ -122,8 +113,10 @@ class AppController
                     'INSERT INTO cart_items (user_id, item_id, amount)
                     VALUES (?, ?, ?)
                     ON DUPLICATE KEY UPDATE amount = ?',
-                    [AuthUtils::getUser($request)->id, $validated['id'], $validated['amount'],
-                        $validated['amount']]
+                    [
+                        AuthUtils::getUser($request)->id, $validated['id'], $validated['amount'],
+                        $validated['amount']
+                    ]
                 );
             }
         }

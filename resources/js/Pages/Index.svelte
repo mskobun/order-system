@@ -1,5 +1,5 @@
 <script>
-    import { inertia, page, Link, router } from "@inertiajs/svelte";
+    import { page, Link, router } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
     import MenuItem from "../Components/MenuItem.svelte";
     import { Drawer, CloseButton, Button } from "flowbite-svelte";
@@ -19,6 +19,7 @@
     export let menu;
     export let items;
     export let cart = {};
+
     // This sets cartDrawerHidden to value of open_cart initially
     // But then it's only set by user actions. This is so reloads due to
     // cart changes don't suddenly trigger

@@ -10,13 +10,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\Log;
 
-class LoginController extends Controller
+// Handles endpoints related to authentication
+class LoginController
 {
-    /**
-     * Handle an authentication attempt.
-     */
+    // Handles an authentication attempt
     public function authenticate(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
@@ -40,6 +38,7 @@ class LoginController extends Controller
         )->withInput($request->only('email', 'remember'));
     }
 
+    // Attempts to login with a set of credentials
     public function attemptLogin(array $credentials, bool $remember, array &$errors): bool
     {
         $email = $credentials['email'];
@@ -83,21 +82,30 @@ class LoginController extends Controller
         return false;
     }
 
-    public function isValidPassword(string $password, string $confirmation, array &$errors): bool
+    private function isValidPassword(string $password, string $confirmation, array &$errors): bool
     {
         $hadError = false;
 
+        // Checks if the password satisfies a certain format
+        // Specifically, it must contain 3 of the following 5 categories
+        // - Uppercase characters
+        // - Lowercase characters
+        // - Digits
+        // - Special characters
+        // - Unicode characters
         if (preg_match('/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/', $password) !== 1) {
             $errors = array_merge($errors, ['passwordRegexError' => 'The password didn\'t fit the specified format']);
             $hadError = true;
         }
 
+        // Minimum length check
         $min_length = 6;
         if (strlen($password) < $min_length) {
             $errors = array_merge($errors, ['passwordLengthError' => "The password must be at least $min_length characters long"]);
             $hadError = true;
         }
 
+        // Confirmation
         if ($password !== $confirmation) {
             $errors = array_merge($errors, ['passwordLengthError' => 'The password confirmation did not match']);
             $hadError = true;
@@ -106,22 +114,23 @@ class LoginController extends Controller
         return !$hadError;
     }
 
+    // Registers a new user account
     public function register(Request $request): RedirectResponse
     {
-        // automatically generates a redirect with errors corresponding to the keys here,
-        // like 'password' => The password field must be at least 6 characters
         $credentials = $request->validate([
             'name' => 'required',
             'email' => ['required', 'email'],
             'newPassword' => ['required'],
         ]);
 
+        // Fills up with errors from isValidPassword
         $errors = [];
+
         if (!LoginController::isValidPassword($request->newPassword, $request->passwordConfirmation, $errors)) {
             return back()->withErrors($errors)->withInput($request->input());
         }
 
-        // ensuring the email is unique manually since the rule for it accesses the DB with an ORM
+        // Ensuring the email is unique manually (instead of using the validate() rule) since the rule for it accesses the DB with an ORM
         $emails = DB::select(
             'SELECT * FROM users
             WHERE email = ?',
@@ -136,8 +145,10 @@ class LoginController extends Controller
             );
         }
 
-        $name = $credentials['name'];
-        $email = $credentials['email'];
+        // Preparing to register a new account
+        // Use of htmlentities to prevent XSS
+        $name = htmlentities($credentials['name']);
+        $email = htmlentities($credentials['email']);
         $password = Hash::make($credentials['newPassword']);
         $time = now();
 
@@ -150,6 +161,7 @@ class LoginController extends Controller
         return redirect('login');
     }
 
+    // Updates user information
     public function updateProfile(Request $request): RedirectResponse
     {
         $request->validate([
@@ -161,7 +173,14 @@ class LoginController extends Controller
 
         $user = AuthUtils::getUser($request);
 
-        if (! is_null($user)) {
+        // htmlentities to prevent XSS
+        $name = htmlentities($request['name']);
+        $email = htmlentities($request['email']);
+        $phone = htmlentities($request['phone']);
+        $address = htmlentities($request['address']);
+        $id = $user->id;
+
+        if (!is_null($user)) {
             DB::statement(
                 'UPDATE users
                 SET name = ?,
@@ -169,16 +188,19 @@ class LoginController extends Controller
                     phone = ?,
                     address = ?
                 WHERE id = ?',
-                [$request['name'], $request['email'], $request['phone'], $request['address'],
-                    $user->id]
+                [
+                    $name, $email, $phone, $address,
+                    $id
+                ]
             );
         }
 
         return back()->withInput(
-            ['updated' => true]
+            ['updatedProfile' => true]
         );
     }
 
+    // Updates user password
     public function updatePassword(Request $request): RedirectResponse
     {
         $request->validate([
@@ -189,25 +211,30 @@ class LoginController extends Controller
 
         $user = AuthUtils::getUser($request);
 
-        $correct = Hash::check($request->oldPassword, $user->password) && !is_null($user); 
+        // Is the old password correct?
+        $correct = Hash::check($request->oldPassword, $user->password) && !is_null($user);
 
         if (!$correct) {
             return back()->withErrors(['passwordWrongError' => 'Incorrect password!'])->withInput($request->input());
         }
 
+        // Checks if the new password is a valid one
         $errors = [];
         if (!LoginController::isValidPassword($request->newPassword, $request->passwordConfirmation, $errors)) {
             return back()->withErrors($errors)->withInput($request->input());
         }
 
+        // Making the new password hash and adding it to DB
         $newPasswordHash = Hash::make($request->newPassword);
 
         DB::statement(
             'UPDATE users
             SET password = ?
             WHERE id = ?',
-            [$newPasswordHash,
-                $user->id]
+            [
+                $newPasswordHash,
+                $user->id
+            ]
         );
 
         return back()->withInput(['updatedPassword' => true]);
@@ -219,6 +246,17 @@ class LoginController extends Controller
         AuthUtils::invalidateSession($request);
 
         return redirect('/');
+    }
+
+    public function displayProfile(Request $request): Response
+    {
+        $user = AuthUtils::getUser($request);
+
+        return Inertia::render('Profile', [
+            'user' => $user,
+            'updatedProfile' => $request->old('updatedProfile'),
+            'updatedPassword' => $request->old('updatedPassword'),
+        ]);
     }
 
     public function displayLogin(Request $request): Response
@@ -238,12 +276,15 @@ class LoginController extends Controller
             'name' => $request->old('name'),
             'email' => $request->old('email'),
         ];
-        
+
         $passwords = [
             'newPassword' => $request->old('newPassword'),
             'passwordConfirmation' => $request->old('passwordConfirmation'),
         ];
 
-        return Inertia::render('Signup', ['values' => $values, 'passwords' => $passwords]);
+        return Inertia::render('Signup', [
+            'values' => $values,
+            'passwords' => $passwords
+        ]);
     }
 }

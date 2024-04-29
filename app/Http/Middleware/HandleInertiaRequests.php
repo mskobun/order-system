@@ -36,11 +36,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // Adds the user to every request so it can be fetched
         return array_merge(parent::share($request), [
             'user' => fn () => AuthUtils::getUser($request) ?
-            collect(AuthUtils::getUser($request))
+                collect(AuthUtils::getUser($request))
                 ->only('id', 'name', 'email', 'phone', 'address')
-            : null,
+                : null,
         ]);
     }
 }

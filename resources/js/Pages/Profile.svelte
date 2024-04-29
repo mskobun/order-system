@@ -1,17 +1,8 @@
 <script>
-    import { page, router } from "@inertiajs/svelte";
+    import { router } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
-    import {
-        Input,
-        Label,
-        Helper,
-        Button,
-        Checkbox,
-        Heading,
-        A,
-    } from "flowbite-svelte";
-    import Field from "../Components/Checkout/Field.svelte";
-    import Section from "../Components/Checkout/Section.svelte";
+    import { Helper, Button, Heading } from "flowbite-svelte";
+    import Field from "../Components/Field.svelte";
     import PasswordBox from "../Components/PasswordBox.svelte";
 
     export let user = {
@@ -21,11 +12,9 @@
         address: null,
     };
 
-    export let passwords = {
-    }
+    export let passwords = {};
 
-    export let errors = {
-    }
+    export let errors = {};
 
     export let updatedProfile = false;
     export let updatedPassword = false;
@@ -47,7 +36,9 @@
             >
                 <div class="flex flex-row w-full">
                     <div class="flex flex-col w-full h-full">
-                        <div class="p-6 space-y-2 md:space-y-2 sm:p-8 flex-grow">
+                        <div
+                            class="p-6 space-y-2 md:space-y-2 sm:p-8 flex-grow"
+                        >
                             <Heading
                                 tag="h1"
                                 class="mb-4"
@@ -55,7 +46,10 @@
                             >
                                 My profile
                             </Heading>
-                            <form class="space-y-2 md:space-y-3" on:submit|preventDefault={submitUser}>
+                            <form
+                                class="space-y-2 md:space-y-3"
+                                on:submit|preventDefault={submitUser}
+                            >
                                 <Field
                                     id="name"
                                     label="Name"
@@ -93,10 +87,10 @@
                                     required={true}
                                 ></Field>
                                 <Button type="submit">Update</Button>
-                                {#if updatedProfile} 
-                                <Helper class="m-1 text-sm" color="red">
-                                    Updated!
-                                </Helper>
+                                {#if updatedProfile}
+                                    <Helper class="m-1 text-sm" color="red">
+                                        Updated!
+                                    </Helper>
                                 {/if}
                             </form>
                         </div>
@@ -108,13 +102,22 @@
                             >
                                 Password
                             </Heading>
-                            <form class="space-y-2 md:space-y-3" on:submit|preventDefault={submitPassword}>
-                                <PasswordBox bind:values={passwords} {errors} className={"space-y-2 md:space-y-3"} showOldPassword required />
+                            <form
+                                class="space-y-2 md:space-y-3"
+                                on:submit|preventDefault={submitPassword}
+                            >
+                                <PasswordBox
+                                    bind:values={passwords}
+                                    {errors}
+                                    className={"space-y-2 md:space-y-3"}
+                                    showOldPassword
+                                    required
+                                />
                                 <Button type="submit">Update</Button>
-                                {#if updatedPassword} 
-                                <Helper class="m-1 text-sm" color="red">
-                                    Updated!
-                                </Helper>
+                                {#if updatedPassword}
+                                    <Helper class="m-1 text-sm" color="red">
+                                        Updated!
+                                    </Helper>
                                 {/if}
                             </form>
                         </div>

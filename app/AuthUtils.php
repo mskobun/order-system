@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+// A class containing all of the authentication-related functions required for the program
+// We initially intended to manually implement every function here, to avoid implicit DB calls by Laravel
+// But with SESSION_DRIVER=file, only retrieving the user ($request->user()) and Auth::check() used DB calls
+// Hence the rest are simply redirects to existing Laravel functions
 class AuthUtils
 {
-    // $user is probably just gonna be a select object in the future
-    // atm it has to be a full model user created from the data there
     public static function login($user, $remember): void
     {
         Auth::login($user, $remember);
@@ -39,7 +41,11 @@ class AuthUtils
         // query it it
         $user_id = $request->session()->get(Auth::getFacadeRoot()->guard()->getName());
         if ($user_id) {
-            $res = DB::select('SELECT * FROM users WHERE id = ?', [$user_id]);
+            $res = DB::select(
+                'SELECT * FROM users 
+                WHERE id = ?',
+                [$user_id]
+            );
 
             return $res[0];
         } else {
@@ -51,6 +57,6 @@ class AuthUtils
     {
         $user = AuthUtils::getUser($request);
 
-        return ! is_null($user);
+        return !is_null($user);
     }
 }

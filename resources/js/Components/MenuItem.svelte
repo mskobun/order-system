@@ -1,3 +1,4 @@
+<!-- An individual menu item -->
 <script>
     import { Popover, Button, ButtonGroup } from "flowbite-svelte";
     export let id, name, description, image_url, price, amount, modifyAmount;

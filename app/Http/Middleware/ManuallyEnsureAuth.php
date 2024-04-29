@@ -16,7 +16,9 @@ class ManuallyEnsureAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! AuthUtils::check($request)) {
+        // Middleware that gates pages behind a login screen if the user is not authenticated
+        // This is an alternative to Laravels 'auth' middleware, that uses DB calls
+        if (!AuthUtils::check($request)) {
             return redirect('login');
         }
 

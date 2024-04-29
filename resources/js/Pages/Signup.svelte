@@ -1,15 +1,7 @@
 <script>
-    import { inertia, Link, router } from "@inertiajs/svelte";
-    import {
-        Input,
-        Label,
-        Helper,
-        Button,
-        Checkbox,
-        Heading,
-        A,
-    } from "flowbite-svelte";
-    import Field from "../Components/Checkout/Field.svelte";
+    import { Link, router } from "@inertiajs/svelte";
+    import { Helper, Button, Checkbox, Heading } from "flowbite-svelte";
+    import Field from "../Components/Field.svelte";
     import PasswordBox from "../Components/PasswordBox.svelte";
 
     export let values = {
@@ -24,7 +16,7 @@
     export let errors = {};
 
     function handleSubmit() {
-        let data = {...values, ...passwords};
+        let data = { ...values, ...passwords };
         router.post("/signup_endpoint", data);
     }
 </script>
@@ -33,10 +25,6 @@
     <div
         class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
     >
-        <!-- <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-            <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo">
-            Flowbite    
-        </a> -->
         <div
             class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
         >
@@ -77,7 +65,12 @@
                         >
                     </Field>
 
-                    <PasswordBox bind:values={passwords} {errors} className={"space-y-4 md:space-y-6"} required />
+                    <PasswordBox
+                        bind:values={passwords}
+                        {errors}
+                        className={"space-y-4 md:space-y-6"}
+                        required
+                    />
                     <div class="flex items-start">
                         <div class="flex items-center h-5">
                             <Checkbox

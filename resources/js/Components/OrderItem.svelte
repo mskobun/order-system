@@ -1,3 +1,4 @@
+<!-- An individual order item -->
 <script>
     export let name, amount, price;
 </script>

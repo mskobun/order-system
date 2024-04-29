@@ -1,3 +1,4 @@
+<!-- For use in forms - bundles together an input box with a label and error display -->
 <script>
     import { Label, Input, Helper } from "flowbite-svelte";
     export let value;
@@ -13,10 +14,18 @@
 
 <div>
     <Label for={id} {color} class="">{label}</Label>
-    <Input {id} {type} {color} {placeholder} class="m-1" bind:value {required}/>
+    <Input
+        {id}
+        {type}
+        {color}
+        {placeholder}
+        class="m-1"
+        bind:value
+        {required}
+    />
     {#if error}
         <Helper class="m-1" color="red">
-            {errorText} 
+            {errorText}
             <slot></slot>
         </Helper>
     {/if}

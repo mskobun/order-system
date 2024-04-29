@@ -1,9 +1,16 @@
 <script>
     import { page, router } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
-    import { Label, Alert, Card, Button, ButtonGroup, Helper } from "flowbite-svelte";
-    import Field from "../Components/Checkout/Field.svelte";
-    import Section from "../Components/Checkout/Section.svelte";
+    import {
+        Label,
+        Alert,
+        Card,
+        Button,
+        ButtonGroup,
+        Helper,
+    } from "flowbite-svelte";
+    import Field from "../Components/Field.svelte";
+    import Section from "../Components/Section.svelte";
     import OrderItem from "../Components/OrderItem.svelte";
 
     import {
@@ -99,15 +106,13 @@
                     />
                 {/if}
                 <div class="mt-3">
-                    <Button
-                        on:click={() => updateProfile()}
-                    >
+                    <Button on:click={() => updateProfile()}>
                         Save Details to Account
                     </Button>
-                    {#if detailsUpdated} 
-                    <Helper class="m-1 text-sm" color="red">
-                        Updated!
-                    </Helper>
+                    {#if detailsUpdated}
+                        <Helper class="m-1 text-sm" color="red">
+                            Updated!
+                        </Helper>
                     {/if}
                 </div>
             </Section>
