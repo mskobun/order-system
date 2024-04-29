@@ -55,8 +55,8 @@
                         <OrderItem {name} {amount} {price} />
                     {/each}
                     <div class="flex bg-white py-2 items-start gap-1">
-                        <h2 class="font-bold">Total:</h2>
-                        <h2 class="font-bold mr-0 ml-auto">
+                        <h2 class="p-1 pb-0 pl-0 font-bold">Total:</h2>
+                        <h2 class="p-1 pb-0 font-bold mr-0 ml-auto">
                             {order.total.toFixed(2)}
                         </h2>
                     </div>

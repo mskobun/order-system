@@ -25,15 +25,15 @@ class AppController
 
         $menu =
             collect($items_with_category)
-            ->groupBy('category_name')
-            ->map(function ($items, $category_name) {
-                $items = $items->map(function ($item, $key) {
-                    return $item->id;
-                });
+                ->groupBy('category_name')
+                ->map(function ($items, $category_name) {
+                    $items = $items->map(function ($item, $key) {
+                        return $item->id;
+                    });
 
-                return ['name' => $category_name, 'items' => $items];
-            })
-            ->values();
+                    return ['name' => $category_name, 'items' => $items];
+                })
+                ->values();
 
         return $menu;
     }
@@ -115,7 +115,7 @@ class AppController
                     ON DUPLICATE KEY UPDATE amount = ?',
                     [
                         AuthUtils::getUser($request)->id, $validated['id'], $validated['amount'],
-                        $validated['amount']
+                        $validated['amount'],
                     ]
                 );
             }

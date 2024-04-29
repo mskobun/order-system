@@ -57,6 +57,6 @@ class AuthUtils
     {
         $user = AuthUtils::getUser($request);
 
-        return !is_null($user);
+        return ! is_null($user);
     }
 }

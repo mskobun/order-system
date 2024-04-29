@@ -129,7 +129,7 @@
                     {/each}
 
                     <div class="flex bg-white py-2 items-start gap-1">
-                        <h2 class="p-1 font-bold">Total:</h2>
+                        <h2 class="p-1 pl-0 font-bold">Total:</h2>
                         <h2 class="p-1 font-bold mr-0 ml-auto">
                             {total.toFixed(2)}
                         </h2>
@@ -137,7 +137,7 @@
                 </div>
             </Section>
             <Section>
-                <h1 class="text-2xl font-bold mt-6">Payment Details</h1>
+                <h1 class="text-2xl font-bold mt-4">Payment Details</h1>
                 <Card padding="md">
                     <Field
                         id="card-number-input"

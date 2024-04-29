@@ -112,7 +112,7 @@ class LoginController
             $hadError = true;
         }
 
-        return !$hadError;
+        return ! $hadError;
     }
 
     // Registers a new user account
@@ -127,7 +127,7 @@ class LoginController
         // Fills up with errors from isValidPassword
         $errors = [];
 
-        if (!LoginController::isValidPassword($request->newPassword, $request->passwordConfirmation, $errors)) {
+        if (! LoginController::isValidPassword($request->newPassword, $request->passwordConfirmation, $errors)) {
             return back()->withErrors($errors)->withInput($request->input());
         }
 
@@ -179,7 +179,7 @@ class LoginController
         $address = $request['address'];
         $id = $user->id;
 
-        if (!is_null($user)) {
+        if (! is_null($user)) {
             DB::statement(
                 'UPDATE users
                 SET name = ?,
@@ -189,7 +189,7 @@ class LoginController
                 WHERE id = ?',
                 [
                     $name, $email, $phone, $address,
-                    $id
+                    $id,
                 ]
             );
         }
@@ -211,15 +211,15 @@ class LoginController
         $user = AuthUtils::getUser($request);
 
         // Is the old password correct?
-        $correct = Hash::check($request->oldPassword, $user->password) && !is_null($user);
+        $correct = Hash::check($request->oldPassword, $user->password) && ! is_null($user);
 
-        if (!$correct) {
+        if (! $correct) {
             return back()->withErrors(['passwordWrongError' => 'Incorrect password!'])->withInput($request->input());
         }
 
         // Checks if the new password is a valid one
         $errors = [];
-        if (!LoginController::isValidPassword($request->newPassword, $request->passwordConfirmation, $errors)) {
+        if (! LoginController::isValidPassword($request->newPassword, $request->passwordConfirmation, $errors)) {
             return back()->withErrors($errors)->withInput($request->input());
         }
 
@@ -232,7 +232,7 @@ class LoginController
             WHERE id = ?',
             [
                 $newPasswordHash,
-                $user->id
+                $user->id,
             ]
         );
 
@@ -283,7 +283,7 @@ class LoginController
 
         return Inertia::render('Signup', [
             'values' => $values,
-            'passwords' => $passwords
+            'passwords' => $passwords,
         ]);
     }
 }

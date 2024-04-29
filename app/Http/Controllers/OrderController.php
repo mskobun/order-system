@@ -66,7 +66,7 @@ class OrderController
         });
 
         return Inertia::render('Orders', [
-            'orders' => $orders
+            'orders' => $orders,
         ]);
     }
 
@@ -81,11 +81,11 @@ class OrderController
             'dineIn' => 'required|boolean',
             'address' => 'required_if:dineIn,false|string|min:1',
             'payment.type' => ['required', Rule::in(['card'])],
-            'payment.number' => ['required', 'regex:' . self::CC_REGEX],
+            'payment.number' => ['required', 'regex:'.self::CC_REGEX],
             'payment.expiryMonth' => 'required|integer|min:1|max:12',
             // TODO: better year validation
             'payment.expiryYear' => 'required|integer|min:0',
-            'payment.cvv' => 'required|integer|min:0|max:999'
+            'payment.cvv' => 'required|integer|min:0|max:999',
         ]);
 
         // Remove payment details as soon as possible.
@@ -117,7 +117,7 @@ class OrderController
             $joined_items = collect($unavailable_items)
                 ->pluck('name')
                 ->join(',');
-            $error = 'Some items in your cart are no longer available: ' . $joined_items . '. Please remove these items to proceed.';
+            $error = 'Some items in your cart are no longer available: '.$joined_items.'. Please remove these items to proceed.';
 
             return back()
                 ->withInput($request->input())
@@ -125,7 +125,7 @@ class OrderController
         }
 
         // sets the address to null if it doesn't exist
-        if (!array_key_exists('address', $validated)) {
+        if (! array_key_exists('address', $validated)) {
             $validated['address'] = null;
         }
 
@@ -158,7 +158,7 @@ class OrderController
                 VALUES (?, ?, ?, ?, ?, ?);',
                 [
                     AuthUtils::getUser($request)->id, $orderType, $validated['address'],
-                    $validated['phone'], $validated['name'], $total
+                    $validated['phone'], $validated['name'], $total,
                 ]
             );
 
