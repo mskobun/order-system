@@ -1,11 +1,7 @@
 <script>
     import { router } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
-    import {
-        Helper,
-        Button,
-        Heading,
-    } from "flowbite-svelte";
+    import { Helper, Button, Heading } from "flowbite-svelte";
     import Field from "../Components/Field.svelte";
     import PasswordBox from "../Components/PasswordBox.svelte";
 
@@ -43,9 +39,7 @@
             >
                 <div class="flex flex-row w-full">
                     <div class="flex flex-col w-full h-full">
-                        <div
-                            class="p-6 flex-grow"
-                        >
+                        <div class="p-6 flex-grow">
                             <Heading
                                 tag="h1"
                                 class="mb-4"

@@ -15,13 +15,24 @@ use Inertia\Response;
 // Handles endpoints related to customer orders
 class OrderController
 {
-    private static function calculateOrderTotal($order): float
+    private static function addTotalsToOrder(&$order)
     {
-        $total = collect($order->items)->reduce(function ($carry, $item) {
+        $subtotal = collect($order->items)->reduce(function ($carry, $item) {
             return $carry + $item->price * $item->amount;
         }, 0);
 
-        return $total;
+        $order->subtotal = $subtotal;
+
+        $totalAfterDelivery = $subtotal + $order->delivery_fee;
+        $totalAfterTax = $totalAfterDelivery + $totalAfterDelivery*$order->tax;
+        $totalAfterPercentDiscount = $totalAfterTax - $totalAfterTax*$order->discount;
+        $totalAfterPriceReduction = $totalAfterPercentDiscount - $order->price_reduction;
+
+        if ($totalAfterPriceReduction < 0) {
+            $totalAfterPriceReduction = 0;
+        }
+
+        $order->total = $totalAfterPriceReduction;
     }
 
     // Renders the order confirmation page
@@ -71,8 +82,8 @@ class OrderController
             $order->items = $items;
             $order->statuses = $statuses;
 
-            // calculate total
-            $order->total = OrderController::calculateOrderTotal($order);
+            // add subtotal/total to order
+            OrderController::addTotalsToOrder($order);
 
             return $order;
         });
@@ -117,6 +128,7 @@ class OrderController
                 ->withInput($request->input())
                 ->withErrors(['items' => 'There are no items in the cart']);
         }
+
         // Check that all items in the cart are available
         $unavailable_items = DB::select(
             'SELECT items.name FROM cart_items
@@ -143,28 +155,42 @@ class OrderController
 
         $orderType = ($validated['dineIn']) ? 'DINE_IN' : 'DELIVERY';
 
+        // calculate delivery fee
+        // temporary
+        $delivery = 5.0;
+
+        // fetch current tax
+        // at the moment assume 6%
+        $tax = 0.06;
+
+        // calculating the discount percentage and price reduction
+        // check if the entered promo code is valid or if there is an ongoing discount
+        // at the moment for testing, assume a 5% discount and 1.0 price reduction
+        $price_reduction = 1.0;
+        $discount = 0.05;
+
         // Wrap in a transaction, so that if something fails during the insertion,
         // noting will be inserted, instead of having dangling data
         DB::statement('START TRANSACTION;');
         try {
             $cart_items = DB::select(
-                '
-            SELECT items.id, items.name, items.price, cart_items.amount
-            FROM cart_items
-            JOIN items
-            ON items.id = cart_items.item_id
-            WHERE user_id = ?',
+                'SELECT items.id, items.name, items.price, cart_items.amount
+                FROM cart_items
+                JOIN items
+                ON items.id = cart_items.item_id
+                WHERE user_id = ?',
                 [AuthUtils::getUser($request)->id]
             );
 
             // Create the order first, and get the id
             DB::statement(
                 'INSERT INTO orders
-                (user_id, type, address, phone, name)
-                VALUES (?, ?, ?, ?, ?);',
+                (user_id, type, address, phone, name, delivery_fee, tax, price_reduction, discount)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);',
                 [
                     AuthUtils::getUser($request)->id, $orderType, $validated['address'],
                     $validated['phone'], $validated['name'],
+                    $delivery, $tax, $price_reduction, $discount,
                 ]
             );
 

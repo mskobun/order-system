@@ -22,6 +22,10 @@ return new class extends Migration
             $table->string('address');
             $table->string('phone');
             $table->string('name');
+            $table->float('delivery_fee');
+            $table->float('tax');
+            $table->float('price_reduction');
+            $table->float('discount');
         });
 
         Schema::create('order_items', function (Blueprint $table) {

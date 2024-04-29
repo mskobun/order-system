@@ -58,7 +58,37 @@
                     {#each order.items as { name, amount, price }}
                         <OrderItem {name} {amount} {price} />
                     {/each}
-                    <div class="flex bg-white py-2 items-start gap-1">
+                    <div class="flex bg-white items-start gap-1">
+                        <h2 class="p-1 pb-0 pl-0 font-bold">Subtotal:</h2>
+                        <h2 class="p-1 pb-0 mr-0 ml-auto">
+                            {order.subtotal.toFixed(2)}
+                        </h2>
+                    </div>
+                    <div class="flex bg-white items-start gap-1">
+                        <h2 class="p-1 pb-0 pl-0 font-bold">Tax:</h2>
+                        <h2 class="p-1 pb-0 mr-0 ml-auto">
+                            {(order.tax * 100).toFixed(2)}%
+                        </h2>
+                    </div>
+                    <div class="flex bg-white items-start gap-1">
+                        <h2 class="p-1 pb-0 pl-0 font-bold">Discount:</h2>
+                        <h2 class="p-1 pb-0 mr-0 ml-auto">
+                            {(order.discount * 100).toFixed(2)}%
+                        </h2>
+                    </div>
+                    <div class="flex bg-white items-start gap-1">
+                        <h2 class="p-1 pb-0 pl-0 font-bold">Price Reduction:</h2>
+                        <h2 class="p-1 pb-0 mr-0 ml-auto">
+                            {(-order.price_reduction).toFixed(2)}
+                        </h2>
+                    </div>
+                    <div class="flex bg-white items-start gap-1">
+                        <h2 class="p-1 pb-0 pl-0 font-bold">Delivery:</h2>
+                        <h2 class="p-1 pb-0 mr-0 ml-auto">
+                            {order.delivery_fee.toFixed(2)}
+                        </h2>
+                    </div>
+                    <div class="flex bg-white items-start gap-1">
                         <h2 class="p-1 pb-0 pl-0 font-bold">Total:</h2>
                         <h2 class="p-1 pb-0 font-bold mr-0 ml-auto">
                             {order.total.toFixed(2)}
