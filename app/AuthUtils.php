@@ -42,12 +42,21 @@ class AuthUtils
         $user_id = $request->session()->get(Auth::getFacadeRoot()->guard()->getName());
         if ($user_id) {
             $res = DB::select(
-                'SELECT * FROM users 
+                'SELECT * FROM users
                 WHERE id = ?',
                 [$user_id]
             );
 
-            return $res[0];
+            // If the user id in the session is invalid,
+            // for example if the user got deleted,
+            // We will return null and logout the user.
+            if (count($res) < 1) {
+                self::logout();
+
+                return null;
+            } else {
+                return $res[0];
+            }
         } else {
             return null;
         }
