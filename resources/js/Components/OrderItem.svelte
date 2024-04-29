@@ -9,9 +9,9 @@
     >
         {amount}x
     </div>
-    <h2>{name}</h2>
+    <h2 class="p-1">{name}</h2>
 
-    <h2 class="mr-0 ml-auto">
+    <h2 class="p-1 mr-0 ml-auto">
         {(price * amount).toFixed(2)}
     </h2>
 </div>

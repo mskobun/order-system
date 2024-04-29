@@ -1,14 +1,7 @@
 <script>
     import { page, router } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
-    import {
-        Label,
-        Alert,
-        Card,
-        Button,
-        ButtonGroup,
-        Helper,
-    } from "flowbite-svelte";
+    import { Label, Alert, Card, Button, ButtonGroup, Helper } from "flowbite-svelte";
     import Field from "../Components/Field.svelte";
     import Section from "../Components/Section.svelte";
     import OrderItem from "../Components/OrderItem.svelte";
@@ -62,8 +55,11 @@
 </script>
 
 <Layout displayCartButton>
-    <div class="bg-zinc-50">
-        <div class="m-5 max-w-screen-xl m-auto bg-white">
+    <div class="bg-zinc-50 flex-1">
+        <div class="max-w-2xl m-auto bg-white">
+            <div
+                class="p-6 w-full my-2 bg-white rounded-lg shadow dark:border dark:bg-gray-800 dark:border-gray-700"
+            >
             <Section>
                 <h1 class="text-2xl font-bold mb-3">Customer Details</h1>
                 <Field
@@ -106,18 +102,20 @@
                     />
                 {/if}
                 <div class="mt-3">
-                    <Button on:click={() => updateProfile()}>
+                    <Button
+                        on:click={() => updateProfile()}
+                    >
                         Save Details to Account
                     </Button>
-                    {#if detailsUpdated}
-                        <Helper class="m-1 text-sm" color="red">
-                            Updated!
-                        </Helper>
+                    {#if detailsUpdated} 
+                    <Helper class="m-1 text-sm" color="red">
+                        Updated!
+                    </Helper>
                     {/if}
                 </div>
             </Section>
             <Section>
-                <h1 class="text-2xl font-bold">Order Summary</h1>
+                <h1 class="text-2xl font-bold mt-7">Order Summary</h1>
                 {#if errors["items"]}
                     <Alert color="red">{errors["items"]}</Alert>
                 {/if}
@@ -131,15 +129,15 @@
                     {/each}
 
                     <div class="flex bg-white py-2 items-start gap-1">
-                        <h2 class="font-bold">Total:</h2>
-                        <h2 class="font-bold mr-0 ml-auto">
+                        <h2 class="p-1 font-bold">Total:</h2>
+                        <h2 class="p-1 font-bold mr-0 ml-auto">
                             {total.toFixed(2)}
                         </h2>
                     </div>
                 </div>
             </Section>
             <Section>
-                <h1 class="text-2xl font-bold">Payment Details</h1>
+                <h1 class="text-2xl font-bold mt-6">Payment Details</h1>
                 <Card padding="md">
                     <Field
                         id="card-number-input"
@@ -194,11 +192,13 @@
             <div class="m-2">
                 <Button
                     on:click={() => submitOrder()}
-                    class="w-full font-bold text-lg"
+                    class="w-full font-bold text-lg mt-8"
                 >
                     <span> Place Order </span>
                     <CreditCardSolid class="ml-0.5 mt-0.5" />
                 </Button>
+            </div>
+
             </div>
         </div>
     </div>
