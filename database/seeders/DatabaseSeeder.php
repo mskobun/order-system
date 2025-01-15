@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'test@example.com',
                 'phone' => '01412341234',
                 'address' => 'Menara IMC, No 8 Jalan Sultan Ismail, Kuala Lumpur, Malaysia',
+                'password' => Hash::make('test')
             ]);
 
         DB::table('categories')->insertOrIgnore([
